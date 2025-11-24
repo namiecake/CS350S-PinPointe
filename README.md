@@ -1,5 +1,7 @@
 ﻿# CS350S-PinPointe
 
+OMG big note lightFM is not compatible with python ver>12.0 so i had to make a virtual environment setting python to version 11
+
 OK i realized that a lot of books are listed under multiple book IDs so I basically just combined them all so now we actually have 96k books which is probably better lowkey. but basically i reran process_dataset.py on the new data and everything so recommend pulling from the repo!!! 
 
 ok for clustering used truncatedSVD for dimensionality reduction to dimension 300 (instead of 124k) but the parameter of 300 can maybe be toyed with/improved.
@@ -17,6 +19,7 @@ roughly balanced clusters, we recursively split large clusters into multiple sma
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better". because maybe like 25% of children just have the same mainstream tastes ya know.
 - MULTI-CLUSTER ASSIGNMENTS - tiptoe also says: "A common technique to increase search quality in clusterbased nearest-neighbor-search is to assign a single document to multiple clusters [26,64]. Following prior work [26], Tiptoe assigns documents to multiple clusters if they are close to cluster boundaries. In particular, Tiptoe assigns 20% of the documents to two clusters and the remaining 80% only to a single cluster, resulting in a roughly 1.2× overhead in server computation and √ 1.2× overhead in communication. We show in §8 that this optimization improves search quality."
 - so, we should also try multi-clustering, i.e. assign each user to the top 3 clusters.
+
 
 
 
