@@ -7,8 +7,10 @@ Each user vector has dimensions equal to the number of books, with ratings (1-5)
 # first makes a json file for book_id -> book_index
 
 # instead of storing a bunch of super sparse vectors (of length like 124k),
-# this stores user vectors as dictionaries with book_index -> rating if the book was rated
+# this stores user vectors as dictionaries with book_index -> rating if the book was rated (sparse dictionary format)
 # also creates a unified book_id → index mapping
+
+
 
 import json
 import numpy as np
