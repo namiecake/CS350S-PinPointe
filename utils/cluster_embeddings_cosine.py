@@ -259,18 +259,21 @@ def save_clustering_results(user_ids, labels, kmeans, cluster_sizes, output_path
     # Create user_id to cluster mapping
     user_to_cluster = {user_ids[i]: int(labels[i]) for i in range(len(user_ids))}
     
-    # Convert cluster centers to sparse dictionary format
-    # Note: If SVD was used, these are in the reduced dimensional space
-    print("  Converting cluster centroids to sparse format...")
-    cluster_centroids = {}
-    for cluster_id in range(len(kmeans.cluster_centers_)):
-        centroid = kmeans.cluster_centers_[cluster_id]
-        # Only store non-zero entries
-        sparse_centroid = {}
-        for idx in range(len(centroid)):
-            if centroid[idx] != 0:
-                sparse_centroid[idx] = float(centroid[idx])
-        cluster_centroids[cluster_id] = sparse_centroid
+    # save cluster centroids
+
+    cluster_centroids = {
+        cluster_id: centroid.tolist() 
+        for cluster_id, centroid in enumerate(kmeans.cluster_centers_)
+    }
+
+    # for cluster_id in range(len(kmeans.cluster_centers_)):
+    #     centroid = kmeans.cluster_centers_[cluster_id]
+    #     # Only store non-zero entries
+    #     sparse_centroid = {}
+    #     for idx in range(len(centroid)):
+    #         if centroid[idx] != 0:
+    #             sparse_centroid[idx] = float(centroid[idx])
+    #     cluster_centroids[cluster_id] = sparse_centroid
     
     print(f"  Converted {len(cluster_centroids)} centroids to sparse format")
     
@@ -333,8 +336,8 @@ def main():
     script_dir = Path(__file__).parent
     data_dir = script_dir.parent / 'data'
     
-    input_path = data_dir / 'user_embeddings_train.json'
-    output_path = data_dir / 'user_clusters_cosine.json'
+    input_path = data_dir / 'server/user_embeddings_train.json'
+    output_path = data_dir / 'server/user_clusters_cosine.json'
     
     # Check if input file exists
     if not input_path.exists():

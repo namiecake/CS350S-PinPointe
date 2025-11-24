@@ -171,12 +171,12 @@ def main():
     data_dir = script_dir.parent / 'data'
     
     user_map_path = data_dir / 'user_map.json'
-    user_train_path = data_dir / 'user_train.json'
-    user_test_path = data_dir / 'user_test.json'
+    user_train_path = data_dir / 'server/user_train.json'
+    user_test_path = data_dir / 'clients/user_test.json'
     
     output_map_path = data_dir / 'user_embeddings.json'
-    output_train_path = data_dir / 'user_embeddings_train.json'
-    output_test_path = data_dir / 'user_embeddings_test.json'
+    output_train_path = data_dir / 'server/user_embeddings_train.json'
+    output_test_path = data_dir / 'clients/user_embeddings_test.json'
     book_index_path = data_dir / 'book_id_to_index.json'
     
     # Handle 'books' option - just create the book index mapping and exit
