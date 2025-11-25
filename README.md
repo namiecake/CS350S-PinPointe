@@ -3,17 +3,17 @@
 updates:
 
 if changing the dataset, run:
-create_embeddings
-cluster_embeddings_cosine
+- create_embeddings
+- cluster_embeddings_cosine
 - move the saved svd_model.pkl to data/server
-generate_cluster_recs
+- generate_cluster_recs
 
 eval:
-filter_uses.py (get active users only)
-process_test_users (test/train split per user profile)
-query_for_recs on the train set of the evaluated users
-baseline_recommenders - all on the train set of the evaluated users
-evaluate_recall (not done yet)
+- filter_uses.py (get active users only)
+- process_test_users (test/train split per user profile)
+- query_for_recs on the train set of the evaluated users
+- baseline_recommenders - all on the train set of the evaluated users
+- evaluate_recall (not done yet)
 
 COMPLETED
 - embeddings
@@ -47,6 +47,7 @@ roughly balanced clusters, we recursively split large clusters into multiple sma
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better". because maybe like 25% of children just have the same mainstream tastes ya know.
 - MULTI-CLUSTER ASSIGNMENTS - tiptoe also says: "A common technique to increase search quality in clusterbased nearest-neighbor-search is to assign a single document to multiple clusters [26,64]. Following prior work [26], Tiptoe assigns documents to multiple clusters if they are close to cluster boundaries. In particular, Tiptoe assigns 20% of the documents to two clusters and the remaining 80% only to a single cluster, resulting in a roughly 1.2× overhead in server computation and √ 1.2× overhead in communication. We show in §8 that this optimization improves search quality."
 - so, we should also try multi-clustering, i.e. assign each user to the top 3 clusters.
+
 
 
 
