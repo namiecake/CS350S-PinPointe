@@ -11,7 +11,6 @@ Each user vector has dimensions equal to the number of books, with ratings (1-5)
 # also creates a unified book_id → index mapping
 
 
-
 import json
 import numpy as np
 from scipy.sparse import lil_matrix, save_npz

@@ -1,0 +1,409 @@
+{
+  "algorithm": "mf",
+  "top_k": 100,
+  "n_users": 1,
+  "recommendations": {
+    "3d4ae5f1ede620c32346e52985d4d28c": [
+      [
+        "59267",
+        "A Little Princess"
+      ],
+      [
+        "71820",
+        "The Enchanted Castle"
+      ],
+      [
+        "87486",
+        "The Bad Beginning (A Series of Unfortunate Events, #1)"
+      ],
+      [
+        "45868",
+        "Alice's Adventures in Wonderland & Through the Looking-Glass"
+      ],
+      [
+        "59008",
+        "The Secret Garden"
+      ],
+      [
+        "86962",
+        "Nutcracker"
+      ],
+      [
+        "66691",
+        "The Borrowers (The Borrowers, #1)"
+      ],
+      [
+        "87231",
+        "The Happy Prince and Other Tales"
+      ],
+      [
+        "18521",
+        "Mary Poppins (Mary Poppins, #1)"
+      ],
+      [
+        "78747",
+        "The BFG"
+      ],
+      [
+        "82731",
+        "Momo"
+      ],
+      [
+        "75762",
+        "The Wind in the Willows"
+      ],
+      [
+        "16967",
+        "The Velveteen Rabbit"
+      ],
+      [
+        "6074",
+        "Three Times Lucky (Mo & Dale Mysteries, #1)"
+      ],
+      [
+        "1172",
+        "Mandy"
+      ],
+      [
+        "44525",
+        "Winnie-the-Pooh"
+      ],
+      [
+        "55586",
+        "Bridge to Terabithia"
+      ],
+      [
+        "74139",
+        "The 101 Dalmatians (The Hundred and One Dalmatians, #1)"
+      ],
+      [
+        "76849",
+        "Where the Mountain Meets the Moon"
+      ],
+      [
+        "81077",
+        "The Mysterious Howling (The Incorrigible Children of Ashton Place #1)"
+      ],
+      [
+        "60783",
+        "The Moorchild"
+      ],
+      [
+        "46915",
+        "Clockwork"
+      ],
+      [
+        "70923",
+        "The Water Babies"
+      ],
+      [
+        "42380",
+        "The Annotated Brothers Grimm"
+      ],
+      [
+        "68948",
+        "The Story of Holly and Ivy"
+      ],
+      [
+        "12282",
+        "The Secret of Platform 13"
+      ],
+      [
+        "71575",
+        "The Princess and the Goblin  (Princess Irene and Curdie, #1)"
+      ],
+      [
+        "77046",
+        "Ozma of Oz (Oz, #3)"
+      ],
+      [
+        "47322",
+        "The Mouse and His Child"
+      ],
+      [
+        "28066",
+        "The Marvelous Land of Oz (Oz, #2)"
+      ],
+      [
+        "84238",
+        "The Life and Adventures of Santa Claus"
+      ],
+      [
+        "2183",
+        "Sarah, Plain and Tall (Sarah, Plain and Tall, #1)"
+      ],
+      [
+        "83555",
+        "Instructions"
+      ],
+      [
+        "1193",
+        "The Last of the Really Great Whangdoodles"
+      ],
+      [
+        "54061",
+        "Little Lord Fauntleroy"
+      ],
+      [
+        "40086",
+        "Pax"
+      ],
+      [
+        "72313",
+        "The Complete Fairy Tales"
+      ],
+      [
+        "72972",
+        "Then Again, Maybe I Won't"
+      ],
+      [
+        "87029",
+        "Caps for Sale: A Tale of a Peddler, Some Monkeys and Their Monkey Business"
+      ],
+      [
+        "77381",
+        "Beyond the Deepwoods (The Edge Chronicles: The Twig Saga #1; The Edge Chronicles #4)"
+      ],
+      [
+        "27055",
+        "The Annotated Alice: The Definitive Edition"
+      ],
+      [
+        "69990",
+        "Llama Llama Red Pajama"
+      ],
+      [
+        "34915",
+        "Little Bear"
+      ],
+      [
+        "43591",
+        "Wonder"
+      ],
+      [
+        "58474",
+        "The Boxcar Children (The Boxcar Children, #1)"
+      ],
+      [
+        "55685",
+        "When the Sea Turned to Silver"
+      ],
+      [
+        "87408",
+        "A Tale Dark & Grimm (A Tale Dark & Grimm, #1)"
+      ],
+      [
+        "67346",
+        "One False Note (The 39 Clues, #2)"
+      ],
+      [
+        "44723",
+        "Roverandom"
+      ],
+      [
+        "38312",
+        "Aesop's Fables"
+      ],
+      [
+        "68117",
+        "The Giver (The Giver, #1)"
+      ],
+      [
+        "48180",
+        "Warren the 13th and The All-Seeing Eye"
+      ],
+      [
+        "76758",
+        "Beyond the Grave (The 39 Clues #4)"
+      ],
+      [
+        "28082",
+        "The Road to Oz (Oz, #5)"
+      ],
+      [
+        "56881",
+        "The Littlest Bigfoot"
+      ],
+      [
+        "73742",
+        "Harry Potter and the Prisoner of Azkaban (Harry Potter, #3)"
+      ],
+      [
+        "75646",
+        "Alice in Wonderland and Through the Looking Glass"
+      ],
+      [
+        "95109",
+        "The Magic City"
+      ],
+      [
+        "71573",
+        "The Story of the Treasure Seekers (Bastable Children, #1)"
+      ],
+      [
+        "1177",
+        "Half Magic"
+      ],
+      [
+        "89924",
+        "Each Peach Pear Plum"
+      ],
+      [
+        "37744",
+        "Over Sea, Under Stone (The Dark is Rising, #1)"
+      ],
+      [
+        "90236",
+        "Won-Ton: A Cat Tale Told in Haiku"
+      ],
+      [
+        "76418",
+        "The Dark is Rising (Dark is Rising, #2)"
+      ],
+      [
+        "88628",
+        "All My Friends Are Dead"
+      ],
+      [
+        "70666",
+        "The Little White Horse"
+      ],
+      [
+        "44003",
+        "Mrs. Frisby and the Rats of NIMH"
+      ],
+      [
+        "18527",
+        "Mary Poppins"
+      ],
+      [
+        "66914",
+        "Which Witch?"
+      ],
+      [
+        "40617",
+        "The Neil Gaiman Audio Collection"
+      ],
+      [
+        "87557",
+        "Abel's Island"
+      ],
+      [
+        "75687",
+        "The Gashlycrumb Tinies (The Vinegar Works #1)"
+      ],
+      [
+        "87879",
+        "The Happy Prince"
+      ],
+      [
+        "42571",
+        "A House of Pomegranates"
+      ],
+      [
+        "43693",
+        "Pip Bartlett's Guide to Magical Creatures (Pip Bartlett, #1)"
+      ],
+      [
+        "57923",
+        "Journey to the River Sea"
+      ],
+      [
+        "58267",
+        "The House with a Clock in Its Walls (Lewis Barnavelt, #1)"
+      ],
+      [
+        "1520",
+        "Liesl & Po"
+      ],
+      [
+        "32643",
+        "Uncle Montague's Tales of Terror (Tales of Terror, #1)"
+      ],
+      [
+        "26746",
+        "The Fairy-Tale Detectives (The Sisters Grimm, #1)"
+      ],
+      [
+        "88144",
+        "The Kneebone Boy"
+      ],
+      [
+        "58606",
+        "Fog Magic"
+      ],
+      [
+        "82095",
+        "The Dreamer"
+      ],
+      [
+        "41070",
+        "Have Courage, Be Kind: The Tale of Cinderella"
+      ],
+      [
+        "59476",
+        "Guess How Much I Love You"
+      ],
+      [
+        "94265",
+        "The Emerald Atlas (The Books of Beginning #1)"
+      ],
+      [
+        "24604",
+        "Everything I Need To Know I Learned From a Little Golden Book"
+      ],
+      [
+        "68274",
+        "The Wolves of Willoughby Chase (The Wolves Chronicles, #1)"
+      ],
+      [
+        "5809",
+        "Dorothy and the Wizard in Oz (Oz, #4)"
+      ],
+      [
+        "20659",
+        "Charlotte Sometimes"
+      ],
+      [
+        "43709",
+        "Crenshaw"
+      ],
+      [
+        "90155",
+        "The Indian in the Cupboard"
+      ],
+      [
+        "87866",
+        "Betsy-Tacy (Betsy-Tacy, #1)"
+      ],
+      [
+        "37579",
+        "Cinderella"
+      ],
+      [
+        "49324",
+        "If I Had a Gryphon"
+      ],
+      [
+        "23239",
+        "The Railway Children"
+      ],
+      [
+        "87865",
+        "Here Be Monsters!"
+      ],
+      [
+        "2535",
+        "Moses: When Harriet Tubman Led Her People to Freedom"
+      ],
+      [
+        "72761",
+        "Cautionary Tales for Children"
+      ],
+      [
+        "19364",
+        "Chu's Day (Chu, #1)"
+      ]
+    ]
+  }
+}

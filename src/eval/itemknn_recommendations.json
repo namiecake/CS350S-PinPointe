@@ -1,0 +1,409 @@
+{
+  "algorithm": "itemknn",
+  "top_k": 100,
+  "n_users": 1,
+  "recommendations": {
+    "3d4ae5f1ede620c32346e52985d4d28c": [
+      [
+        "89111",
+        "Rapunzel"
+      ],
+      [
+        "15430",
+        "Go to Sleep, Dear Dragon"
+      ],
+      [
+        "45262",
+        "Danny and the Dinosaur: Too Tall"
+      ],
+      [
+        "78740",
+        "Oobleck, Slime & Dancing Spaghetti: Twenty Terrific at Home Science Experiments Inspired by Favorite Children's Books"
+      ],
+      [
+        "21016",
+        "Martin Pippin in the Daisy Field"
+      ],
+      [
+        "34335",
+        "Under the Christmas Tree"
+      ],
+      [
+        "56454",
+        "From Cotton to T-Shirt"
+      ],
+      [
+        "15072",
+        "NICOBOBINUS"
+      ],
+      [
+        "52190",
+        "When Birds Could Talk And Bats Could Sing"
+      ],
+      [
+        "42397",
+        "There's A Wolf In My Pudding"
+      ],
+      [
+        "57391",
+        "Santa's First Flight"
+      ],
+      [
+        "3381",
+        "Richard Kennedy: Collected Stories"
+      ],
+      [
+        "86425",
+        "The Wonderful Way Babies Are Made"
+      ],
+      [
+        "79673",
+        "Lion to Guard"
+      ],
+      [
+        "43344",
+        "The Richest Doll in the World"
+      ],
+      [
+        "89305",
+        "Five Chinese Brothers"
+      ],
+      [
+        "92769",
+        "Off to the Sweet Shores of Africa: And Other Talking Drum Rhymes"
+      ],
+      [
+        "51766",
+        "James and the Rain"
+      ],
+      [
+        "24523",
+        "Brianna, Jamaica, and the Dance of Spring"
+      ],
+      [
+        "95070",
+        "Clever Gretchen"
+      ],
+      [
+        "46091",
+        "A Cloak for the Moon"
+      ],
+      [
+        "62139",
+        "Bobby Baseball"
+      ],
+      [
+        "54410",
+        "Ten Playful Tigers: A Back-and-Forth Counting Book"
+      ],
+      [
+        "36315",
+        "Kayla the Pottery Fairy (Rainbow Magic, #141; The Magical Crafts Fairies, #1)"
+      ],
+      [
+        "3564",
+        "The Dragon Prince: A Chinese Beauty & the Beast Tale"
+      ],
+      [
+        "9581",
+        "Freddy Rides Again"
+      ],
+      [
+        "19614",
+        "Getting to Know Ruben Plotnick"
+      ],
+      [
+        "55489",
+        "My Grandmother's Stories: A Collection of Jewish Folk Tales"
+      ],
+      [
+        "86362",
+        "Olaf The Viking And The Pig Who Would Be King"
+      ],
+      [
+        "8977",
+        "William and the Magic Ring: A Shadow Casting Bedtime Story"
+      ],
+      [
+        "19139",
+        "How Does the Show Go On: An Introduction to the Theater"
+      ],
+      [
+        "57264",
+        "William Heads to Hollywood"
+      ],
+      [
+        "70033",
+        "Hamilton"
+      ],
+      [
+        "1141",
+        "Hippo Jogs for Health"
+      ],
+      [
+        "34269",
+        "To Everything There Is a Season"
+      ],
+      [
+        "73111",
+        "Alice"
+      ],
+      [
+        "62517",
+        "One Day on our Blue Planet...in the Rain Forest"
+      ],
+      [
+        "29942",
+        "The Singular Adventures of Baron Munchausen"
+      ],
+      [
+        "76132",
+        "The Shell Woman and the King: A Chinese Folktale"
+      ],
+      [
+        "24872",
+        "Come Sunday"
+      ],
+      [
+        "5063",
+        "Surfer Dog"
+      ],
+      [
+        "89116",
+        "Stepsister from Planet Weird"
+      ],
+      [
+        "68974",
+        "The Bear and the People"
+      ],
+      [
+        "1899",
+        "Awful Alexander"
+      ],
+      [
+        "37806",
+        "Ohio Thunder"
+      ],
+      [
+        "7906",
+        "Fairy Wings: A Story"
+      ],
+      [
+        "83556",
+        "Lionel And The Book Of Beasts"
+      ],
+      [
+        "92701",
+        "Shake My Sillies Out"
+      ],
+      [
+        "49021",
+        "Georgie's Christmas Carol (Georgie The Ghost, #8)"
+      ],
+      [
+        "93597",
+        "That's Our Cleo! And other stories about cats"
+      ],
+      [
+        "42580",
+        "The Legend of Rosepetal"
+      ],
+      [
+        "60606",
+        "I Love Mom with the Very Hungry Caterpillar"
+      ],
+      [
+        "44201",
+        "Petrouchka: The Story of the Ballet"
+      ],
+      [
+        "19226",
+        "Sun Up"
+      ],
+      [
+        "90239",
+        "Smoke and Fluff"
+      ],
+      [
+        "74627",
+        "Christmas is a Time of Giving"
+      ],
+      [
+        "59616",
+        "Show & Tell Me the World"
+      ],
+      [
+        "13031",
+        "The First Thousand Words In German"
+      ],
+      [
+        "78177",
+        "The Cloud Forest"
+      ],
+      [
+        "96253",
+        "Annette Tison & Talus Taylor present, Barbabeau's new hairstyle."
+      ],
+      [
+        "61193",
+        "Come Back, Lucy"
+      ],
+      [
+        "91418",
+        "Orlando (The Marmalade Cat): A Seaside Holiday"
+      ],
+      [
+        "76889",
+        "Great Days of a Country House"
+      ],
+      [
+        "37216",
+        "Bring Up Genius!"
+      ],
+      [
+        "85943",
+        "Diana and Her Rhinoceros"
+      ],
+      [
+        "69542",
+        "The Birthday Book: Celebrations for Everyone"
+      ],
+      [
+        "92923",
+        "Orlando, The Marmalade Cat: The Frisky Housewife"
+      ],
+      [
+        "92616",
+        "Nature's Playground: Activities, Crafts And Games To Encourage Children To Get Outdoors"
+      ],
+      [
+        "96102",
+        "The box of delights: when the wolves were running."
+      ],
+      [
+        "54661",
+        "Le mariage de Babar"
+      ],
+      [
+        "15480",
+        "Rupert The Daily Express Annual  no. 39 - 1974"
+      ],
+      [
+        "80032",
+        "Dimanche Diller"
+      ],
+      [
+        "58065",
+        "Noggin and the Dragon"
+      ],
+      [
+        "75796",
+        "Going Shopping"
+      ],
+      [
+        "73055",
+        "Christmas Angel"
+      ],
+      [
+        "67333",
+        "A Pet for the Orphelines (The Orphelines, #3)"
+      ],
+      [
+        "67330",
+        "A Brother for the Orphelines"
+      ],
+      [
+        "12150",
+        "Princess in the Forest"
+      ],
+      [
+        "13549",
+        "The Box Of Delights or When the Wolves Were Running"
+      ],
+      [
+        "34813",
+        "Shrewbettina's Birthday"
+      ],
+      [
+        "1548",
+        "Animal Tracks and Signs"
+      ],
+      [
+        "7615",
+        "The Hidden House"
+      ],
+      [
+        "67401",
+        "The Box of Delights"
+      ],
+      [
+        "83778",
+        "The Travels of Benjamin of Tudela: Through Three Continents in the Twelfth Century"
+      ],
+      [
+        "10787",
+        "A Great Big Ugly Man Came Up and Tied His Horse to Me"
+      ],
+      [
+        "47911",
+        "Alice's Adventures in Wonderland: Macmillan Classics Edition"
+      ],
+      [
+        "14865",
+        "The Book of the Thousand Nights and a Night; The Complete Burton Translation with the Complete Burton Notes, The Terminal Essay, A Complete Index, and 1001 decorations by Valenti Angelo (Volumes V & VI)"
+      ],
+      [
+        "7622",
+        "\u6e29\u59ae\u6ed1\u65f1\u51b0 [Wenni hua han bing]"
+      ],
+      [
+        "82545",
+        "Faithful Elephants: A True Story Of Animals, People, And War"
+      ],
+      [
+        "49178",
+        "Through the Looking-Glass: Macmillan Classics Edition"
+      ],
+      [
+        "52642",
+        "Star Wars Annual 2016"
+      ],
+      [
+        "68209",
+        "Calling the Doves =: El Canto de Las Palomas"
+      ],
+      [
+        "54158",
+        "Lucky Bucky in Oz"
+      ],
+      [
+        "24131",
+        "The Superstorm Hurricane Sandy"
+      ],
+      [
+        "93287",
+        "More Tales from Grimm"
+      ],
+      [
+        "20827",
+        "Atticus Claw Breaks the Law"
+      ],
+      [
+        "72607",
+        "More Tales of Uncle Remus(unabridged)audio Cd"
+      ],
+      [
+        "55897",
+        "Tranquilla Trampeltreu die beharrliche Schildkr\u00f6te"
+      ],
+      [
+        "62102",
+        "Borrowed Black: A Labrador Fantasy"
+      ],
+      [
+        "74518",
+        "The Last Battle (The Chronicles of Narnia #7)"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,409 @@
+{
+  "algorithm": "poprec",
+  "top_k": 100,
+  "n_users": 1,
+  "recommendations": {
+    "3d4ae5f1ede620c32346e52985d4d28c": [
+      [
+        "41514",
+        "Ty the Bull"
+      ],
+      [
+        "19301",
+        "Ethan's Story; My Life With Autism"
+      ],
+      [
+        "39848",
+        "The Seven Natural Wonders Of The EARTH (My First Travel Books #2)"
+      ],
+      [
+        "67642",
+        "The Complete Anne of Green Gables Boxed Set (Anne of Green Gables, #1-8)"
+      ],
+      [
+        "21254",
+        "I Have a Dream"
+      ],
+      [
+        "63440",
+        "Dragon Lightning (Dragon Dreamer Book 2)"
+      ],
+      [
+        "38974",
+        "Thank You, Mr. Falker"
+      ],
+      [
+        "20667",
+        "Pecha Kucha & English Language Teaching"
+      ],
+      [
+        "73742",
+        "Harry Potter and the Prisoner of Azkaban (Harry Potter, #3)"
+      ],
+      [
+        "11369",
+        "The Fantastic Flying Books of Mr. Morris Lessmore"
+      ],
+      [
+        "87533",
+        "We are in a Book! (Elephant & Piggie, #13)"
+      ],
+      [
+        "20594",
+        "Sparkle Box"
+      ],
+      [
+        "38838",
+        "Hi, My Name Is Bobo.: (A Weekend in the Life of a 5th Grader)"
+      ],
+      [
+        "71464",
+        "The Monster at the End of this Book"
+      ],
+      [
+        "40783",
+        "Seven Wonders Of The World"
+      ],
+      [
+        "32960",
+        "Oh, The Places You'll Go!"
+      ],
+      [
+        "59296",
+        "The Red Tree"
+      ],
+      [
+        "13480",
+        "\u015eeker Portakal\u0131 (Zeze, #1)"
+      ],
+      [
+        "86627",
+        "The Junkyard Wonders"
+      ],
+      [
+        "95901",
+        "The World of Winnie-the-Pooh (Winnie-the-Pooh, #1-2)"
+      ],
+      [
+        "46720",
+        "A Rambler Steals Home"
+      ],
+      [
+        "43864",
+        "Tu\u1ed5i th\u01a1 d\u1eef d\u1ed9i"
+      ],
+      [
+        "69844",
+        "Andrew Henry's Meadow"
+      ],
+      [
+        "89847",
+        "Beautiful Oops!"
+      ],
+      [
+        "64640",
+        "After the Fall"
+      ],
+      [
+        "28835",
+        "If You Were Me and Lived In... South Korea: A Child's Introduction to Cultures Around the World"
+      ],
+      [
+        "59969",
+        "Grace Hopper: Queen of Computer Code"
+      ],
+      [
+        "5045",
+        "The Little House Collection (Little House, #1-9)"
+      ],
+      [
+        "32358",
+        "Amazing Matilda: A Monarch's Tale"
+      ],
+      [
+        "55191",
+        "I Dissent: Ruth Bader Ginsburg Makes Her Mark"
+      ],
+      [
+        "40278",
+        "An Elephant Is On My House: And Other Poems"
+      ],
+      [
+        "78877",
+        "The Big Orange Splot"
+      ],
+      [
+        "49766",
+        "Mother Bruce"
+      ],
+      [
+        "21723",
+        "Savannah's Story"
+      ],
+      [
+        "48252",
+        "Harry the Happy Mouse"
+      ],
+      [
+        "15544",
+        "Flotsam"
+      ],
+      [
+        "30406",
+        "The Insect Hotel"
+      ],
+      [
+        "27510",
+        "Moobala Schmoobala"
+      ],
+      [
+        "39909",
+        "My First Fun Golf Steps (My First Travel Books Series)"
+      ],
+      [
+        "15300",
+        "Captain No Beard: An Imaginary Tale of a Pirate's Life"
+      ],
+      [
+        "23315",
+        "The Jesus Storybook Bible: Every Story Whispers His Name"
+      ],
+      [
+        "43185",
+        "The BFF Bucket List"
+      ],
+      [
+        "36580",
+        "The Right Word: Roget and His Thesaurus"
+      ],
+      [
+        "31525",
+        "Supernatural Hero"
+      ],
+      [
+        "56193",
+        "Armstrong: The Adventurous Journey of a Mouse to the Moon"
+      ],
+      [
+        "64768",
+        "Miss Rumphius"
+      ],
+      [
+        "54351",
+        "Mucize"
+      ],
+      [
+        "25374",
+        "Come Back Dear Sun"
+      ],
+      [
+        "20654",
+        "Waffles and Pancakes; A Lesson in Bullying"
+      ],
+      [
+        "53627",
+        "Kat Greene Comes Clean"
+      ],
+      [
+        "49787",
+        "It's Not Jack and the Beanstalk"
+      ],
+      [
+        "49964",
+        "Ida, Always"
+      ],
+      [
+        "69149",
+        "The Jolly Postman, or Other People's Letters"
+      ],
+      [
+        "62036",
+        "Blue Sky White Stars"
+      ],
+      [
+        "75457",
+        "The Mysteries of Harris Burdick"
+      ],
+      [
+        "50467",
+        "No Rain Today (Clouds in the Wide Blue Sky, Beginner Readers & Bedtime Stories from the Heart Book 1)"
+      ],
+      [
+        "47006",
+        "Finding Winnie: The True Story of the World's Most Famous Bear"
+      ],
+      [
+        "53357",
+        "Ada's Violin: The Story of the Recycled Orchestra of Paraguay"
+      ],
+      [
+        "53844",
+        "Charlie Bingham Gets Clocked"
+      ],
+      [
+        "28010",
+        "Little Seed: A Life"
+      ],
+      [
+        "39863",
+        "My First Travel Book"
+      ],
+      [
+        "94962",
+        "Press Here"
+      ],
+      [
+        "89152",
+        "Hippos Go Berserk!"
+      ],
+      [
+        "4868",
+        "How the Grinch Stole Christmas!"
+      ],
+      [
+        "14650",
+        "Waffles and Pancakes"
+      ],
+      [
+        "47121",
+        "Rachel's Day in the Garden: A Kids Yoga Spring Colors Book"
+      ],
+      [
+        "22126",
+        "Courtney Saves Christmas"
+      ],
+      [
+        "41483",
+        "A Month of Bedtime Stories: Thirty-One Bite-Sized Tales of Wackiness and Wonder for the Retiring Child"
+      ],
+      [
+        "52867",
+        "Dust Fairy Tales: Absolutely Aggie"
+      ],
+      [
+        "58706",
+        "Butters Comes Home (Butters, #1)"
+      ],
+      [
+        "42159",
+        "A Brand New Day"
+      ],
+      [
+        "56029",
+        "Oxford Roald Dahl Dictionary"
+      ],
+      [
+        "53606",
+        "Treasure at Lure Lake"
+      ],
+      [
+        "4849",
+        "Wonder (Wonder #1)"
+      ],
+      [
+        "17476",
+        "Wheel-Mouse vs All The Crazy Robots"
+      ],
+      [
+        "19404",
+        "The Monster at the End of This Book"
+      ],
+      [
+        "31231",
+        "Faux Paw"
+      ],
+      [
+        "62440",
+        "If You Were Me and Lived in...Poland: A Child's Introduction to Culture Around the World"
+      ],
+      [
+        "58402",
+        "Can a Princess Be a Firefighter?"
+      ],
+      [
+        "82467",
+        "Animalia"
+      ],
+      [
+        "5819",
+        "I Like You"
+      ],
+      [
+        "27773",
+        "If You Were Me and Lived In... France: A Child's Introduction to Cultures Around the World"
+      ],
+      [
+        "64078",
+        "Good Night Stories for Rebel Girls"
+      ],
+      [
+        "75793",
+        "You Are Special (Wemmicksville, #1)"
+      ],
+      [
+        "63112",
+        "Life"
+      ],
+      [
+        "41485",
+        "I Can Cook \"Light Lunches\""
+      ],
+      [
+        "37878",
+        "Popsie Finds A Family (Dog Stories for Kids and Bedtime Stories for Kids): The Adventures of Popsie and Friends"
+      ],
+      [
+        "42411",
+        "Girls Who Choose God"
+      ],
+      [
+        "59902",
+        "Franklin's Flying Bookshop"
+      ],
+      [
+        "29002",
+        "Christmas from Heaven: The True Story of the Berlin Candy Bomber"
+      ],
+      [
+        "43591",
+        "Wonder"
+      ],
+      [
+        "57394",
+        "The Storybook Knight"
+      ],
+      [
+        "80537",
+        "14 Cows for America"
+      ],
+      [
+        "24989",
+        "Journey (Journey Trilogy, #1)"
+      ],
+      [
+        "89574",
+        "The Dot"
+      ],
+      [
+        "70786",
+        "Rasmus and the Vagabond"
+      ],
+      [
+        "22651",
+        "A Big Year for Lily (The Adventures of Lily Lapp, #3)"
+      ],
+      [
+        "58866",
+        "Harry Potter and the Prisoner of Azkaban Audiobook (Harry Potter, #3)"
+      ],
+      [
+        "25185",
+        "Rosie Revere, Engineer"
+      ],
+      [
+        "47565",
+        "Cool Kids Wear Glasses"
+      ]
+    ]
+  }
+}

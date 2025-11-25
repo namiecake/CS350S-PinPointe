@@ -3,14 +3,19 @@
 Cluster user profile embeddings using K-Means with cosine similarity.
 Uses sqrt(n_users) clusters and can optionally assign users to multiple clusters.
 This version uses standard scikit-learn without spherecluster dependency.
+
+literally the same as the other script but saves the svd model
+MODIFIED: Also saves the TruncatedSVD model for query-time transformations.
 """
 
 import json
+import pickle
 import numpy as np
 from scipy.sparse import csr_matrix, lil_matrix
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import normalize
+from sklearn.decomposition import TruncatedSVD
 from pathlib import Path
 import argparse
 from collections import defaultdict
@@ -66,8 +71,6 @@ def perform_dimensionality_reduction(sparse_matrix, n_components=150, random_sta
     Returns:
         Reduced dense matrix and fitted SVD model
     """
-    from sklearn.decomposition import TruncatedSVD
-    
     print(f"\nPerforming dimensionality reduction with TruncatedSVD...")
     print(f"  Reducing from {sparse_matrix.shape[1]} to {n_components} dimensions")
     
@@ -251,37 +254,38 @@ def compute_silhouette_score_sample(matrix, labels, sample_size=5000, metric='co
     return score
 
 
+def save_svd_model(svd_model, output_path):
+    """Save the fitted SVD model to a pickle file."""
+    print(f"\nSaving SVD model to {output_path}...")
+    with open(output_path, 'wb') as f:
+        pickle.dump(svd_model, f)
+    print(f"  SVD model saved successfully")
+    print(f"  Components: {svd_model.n_components}")
+    print(f"  Input features: {svd_model.n_features_in_}")
+
+
 def save_clustering_results(user_ids, labels, kmeans, cluster_sizes, output_path, 
-                            multi_assignments=None, svd_model=None):
+                            multi_assignments=None, svd_model=None, n_books=None):
     """Save clustering results to JSON file."""
     print(f"\nSaving clustering results to {output_path}...")
     
     # Create user_id to cluster mapping
     user_to_cluster = {user_ids[i]: int(labels[i]) for i in range(len(user_ids))}
     
-    # save cluster centroids
-
+    # Save cluster centroids (these are in the reduced, normalized space)
     cluster_centroids = {
         cluster_id: centroid.tolist() 
         for cluster_id, centroid in enumerate(kmeans.cluster_centers_)
     }
 
-    # for cluster_id in range(len(kmeans.cluster_centers_)):
-    #     centroid = kmeans.cluster_centers_[cluster_id]
-    #     # Only store non-zero entries
-    #     sparse_centroid = {}
-    #     for idx in range(len(centroid)):
-    #         if centroid[idx] != 0:
-    #             sparse_centroid[idx] = float(centroid[idx])
-    #     cluster_centroids[cluster_id] = sparse_centroid
-    
-    print(f"  Converted {len(cluster_centroids)} centroids to sparse format")
+    print(f"  Converted {len(cluster_centroids)} centroids")
     
     output_data = {
         'metadata': {
             'n_users': len(user_ids),
             'n_clusters': len(cluster_sizes),
             'n_dimensions': kmeans.cluster_centers_.shape[1],
+            'n_books': n_books,  # Store original book dimension for query transformation
             'clustering_algorithm': 'KMeans_normalized',
             'distance_metric': 'cosine',
             'dimensionality_reduction': svd_model is not None,
@@ -329,6 +333,8 @@ def main():
                         help='Optional: only assign to clusters within this distance')
     parser.add_argument('--n-components', type=int, default=300,
                         help='Number of SVD components for dimensionality reduction (default: 300)')
+    parser.add_argument('--svd-output', type=str, default='svd_model.pkl',
+                        help='Output path for SVD model (default: svd_model.pkl)')
     
     args = parser.parse_args()
     
@@ -337,7 +343,8 @@ def main():
     data_dir = script_dir.parent / 'data'
     
     input_path = data_dir / 'server/user_embeddings_train.json'
-    output_path = data_dir / 'server/user_clusters_cosine.json'
+    output_path = data_dir / 'server/user_clusters_cosine_svd.json'
+    svd_output_path = data_dir / 'server' / args.svd_output
     
     # Check if input file exists
     if not input_path.exists():
@@ -361,6 +368,9 @@ def main():
         sparse_matrix, 
         n_components=args.n_components
     )
+    
+    # Save the SVD model for later use in query transformations
+    save_svd_model(svd_model, svd_output_path)
     
     # Perform clustering on reduced data
     kmeans, labels, clustering_matrix = perform_clustering(
@@ -386,17 +396,19 @@ def main():
             distance_threshold=args.distance_threshold
         )
     
-    # Save results
+    # Save results (including n_books for query-time reference)
     save_clustering_results(
         user_ids, labels, kmeans, cluster_sizes, output_path,
         multi_assignments=multi_assignments,
-        svd_model=svd_model
+        svd_model=svd_model,
+        n_books=n_books
     )
     
     print("\n" + "="*50)
     print("DONE!")
     print("="*50)
     print(f"Clustering results saved to: {output_path}")
+    print(f"SVD model saved to: {svd_output_path}")
 
 
 if __name__ == '__main__':
