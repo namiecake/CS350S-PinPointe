@@ -246,13 +246,13 @@ def main():
     parser.add_argument(
         '--clusters',
         type=str,
-        default='user_clusters_cosine.json',
+        default='user_clusters.json',
         help='Path to user clusters JSON file'
     )
     parser.add_argument(
         '--output',
         type=str,
-        default='recs_per_cluster_implicit.json',
+        default='recs_per_cluster.json',
         help='Path to output recommendations JSON file'
     )
     parser.add_argument(

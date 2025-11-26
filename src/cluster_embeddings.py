@@ -343,7 +343,7 @@ def main():
     data_dir = script_dir.parent / 'data'
     
     input_path = data_dir / 'server/user_embeddings_train.json'
-    output_path = data_dir / 'server/user_clusters_cosine_svd.json'
+    output_path = data_dir / 'server/user_clusters.json'
     svd_output_path = data_dir / 'server' / args.svd_output
     
     # Check if input file exists

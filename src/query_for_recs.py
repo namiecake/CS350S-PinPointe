@@ -20,6 +20,7 @@ naomi notes: NOT PRIVATE
 for computational efficieny, i propose we first tune and evaluate
  the system to get the best recs (i.e. experiment with clustering, etc)
 and then add simplePIR once we are getting the recs we want
+to visualize titles, replace recommendations with recs_with_titles on line 203
 """
 
 import json
@@ -200,7 +201,7 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
         return {
             'cluster_id': cluster_id,
             'similarity': float(similarity),
-            'recommendations': recs_with_title
+            'recommendations': recommendations #use recs_with_title to include titles to visualize recs
         }
     else:
         # Multi-cluster assignment
@@ -299,8 +300,8 @@ def main():
                         help='Path to cluster recommendations JSON')
     
     # Output options
-    parser.add_argument('--output', type=str, default='user_recommendations.json',
-                        help='Output path for recommendations (default: user_recommendations.json)')
+    parser.add_argument('--output', type=str, default='user_recs.json',
+                        help='Output path for recommendations (default: user_recs.json)')
     
     # Algorithm options
     parser.add_argument('--top-k-clusters', type=int, default=1,
@@ -321,12 +322,13 @@ def main():
         script_dir = Path(__file__).parent
         server_dir = script_dir.parent / 'data' / 'server'
         clients_dir = script_dir.parent / 'data' / 'clients'
+        eval_dir = script_dir.parent / 'data' / 'eval'
     
     svd_model_path = server_dir / args.svd_model
     clusters_path = server_dir / args.clusters
     cluster_recs_path = server_dir / args.cluster_recs
-    output_path = clients_dir / args.output
-    embeddings_path = clients_dir / args.embeddings_file
+    output_path = script_dir.parent / 'data' / 'eval' / args.output
+    embeddings_path = eval_dir / args.embeddings_file
     book_title_path = script_dir.parent / 'data' / 'book_index_to_title.json'
     
     # Load models and data

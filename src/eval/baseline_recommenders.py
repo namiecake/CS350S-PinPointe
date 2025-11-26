@@ -18,6 +18,8 @@ Examples:
 
 example:
 python3 eval/baseline_recommenders.py -a mf --user-id "6a85b590f81e32bb05fe65c07ac73d4d"
+
+to visualize titles, replace recs with recs_with_titles on line 380-something
 """
 
 import os
@@ -354,6 +356,7 @@ def generate_recommendations(recommender, user_vectors, user_to_idx, book_to_idx
         else:
             recs = recommender.recommend(user_idx, user_rated_indices, top_k)
         
+        recs = [int(rec) for rec in recs]
         results[uid] = recs
     
     return results
@@ -385,7 +388,9 @@ def generate_recommendations_for_one_user(recommender, user_vectors, uid, user_t
         book_title = book_idx_to_title[rec]
         recs_with_title.append([rec, book_title])
 
-    results[uid] = recs_with_title
+    recs = [int(rec) for rec in recs]
+
+    results[uid] = recs # recs_with_title
     
     return results
 
@@ -407,7 +412,7 @@ def save_results(results, output_path, algorithm_name):
 
 def main():
     parser = argparse.ArgumentParser(description='Book Recommendation System')
-    parser.add_argument('--input', default='active_users_embeddings_test.json',
+    parser.add_argument('--input', default='train_users.json',
                         help='Path to input JSON file with user ratings')
     parser.add_argument('--user-id', type=str,
                         help='Single user ID to get recs for')
@@ -428,7 +433,8 @@ def main():
     script_dir = Path(__file__).parent.parent
     data_dir = script_dir.parent / 'data'
     
-    input_path = data_dir / 'clients' / args.input
+    # input_path = data_dir / 'clients' / args.input
+    input_path = data_dir / 'eval' / args.input
     book_title_path = data_dir / 'book_index_to_title.json'
 
     # Load data
@@ -487,12 +493,12 @@ def main():
             )
 
         if args.output and args.algorithm != 'all':
-            output_path = data_dir / args.output
+            output_path = data_dir / 'eval' / 'baselines' / args.output
         else:
             if args.user_id:
-                output_path = data_dir / f"{algo}_{str(args.user_id)}_recs.json"
+                output_path = data_dir / 'eval' / 'baselines' / f"{algo}_{str(args.user_id)}_recs.json"
             else:
-                output_path = data_dir / f"{algo}_recs.json"
+                output_path = data_dir / 'eval' / 'baselines' / f"{algo}_recs.json"
         
         save_results(results, output_path, algo)
 
