@@ -331,7 +331,7 @@ def main():
                         help='Number of clusters to assign each user to (default: 3)')
     parser.add_argument('--distance-threshold', type=float, default=None,
                         help='Optional: only assign to clusters within this distance')
-    parser.add_argument('--n-components', type=int, default=300,
+    parser.add_argument('--n-components', type=int, default=100,
                         help='Number of SVD components for dimensionality reduction (default: 300)')
     parser.add_argument('--svd-output', type=str, default='svd_model.pkl',
                         help='Output path for SVD model (default: svd_model.pkl)')

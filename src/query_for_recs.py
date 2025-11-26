@@ -21,6 +21,9 @@ for computational efficieny, i propose we first tune and evaluate
  the system to get the best recs (i.e. experiment with clustering, etc)
 and then add simplePIR once we are getting the recs we want
 to visualize titles, replace recommendations with recs_with_titles on line 203
+
+TO GET RECS FOR TRAIN USER PROFILES: 
+python query_for_recs.py --embeddings-file train_user_profiles.json
 """
 
 import json
@@ -294,13 +297,13 @@ def main():
     # Model/data paths
     parser.add_argument('--svd-model', type=str, default='svd_model.pkl',
                         help='Path to saved SVD model (default: svd_model.pkl)')
-    parser.add_argument('--clusters', type=str, default='user_clusters_cosine.json',
-                        help='Path to cluster data JSON (default: user_clusters_cosine.json)')
-    parser.add_argument('--cluster-recs', type=str, default='recs_per_cluster_implicit.json',
+    parser.add_argument('--clusters', type=str, default='user_clusters.json',
+                        help='Path to cluster data JSON (default: user_clusters.json)')
+    parser.add_argument('--cluster-recs', type=str, default='recs_per_cluster.json',
                         help='Path to cluster recommendations JSON')
     
     # Output options
-    parser.add_argument('--output', type=str, default='user_recs.json',
+    parser.add_argument('--output', type=str, default='pinpointe_train_recs.json',
                         help='Output path for recommendations (default: user_recs.json)')
     
     # Algorithm options
@@ -327,7 +330,7 @@ def main():
     svd_model_path = server_dir / args.svd_model
     clusters_path = server_dir / args.clusters
     cluster_recs_path = server_dir / args.cluster_recs
-    output_path = script_dir.parent / 'data' / 'eval' / args.output
+    output_path = script_dir.parent / 'data' / 'eval' / 'inputs' / args.output
     embeddings_path = eval_dir / args.embeddings_file
     book_title_path = script_dir.parent / 'data' / 'book_index_to_title.json'
     

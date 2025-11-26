@@ -282,7 +282,7 @@ def main():
     parser.add_argument(
         '--alpha',
         type=float,
-        default=1.0,
+        default=20.0,
         help='Confidence scaling parameter'
     )
     parser.add_argument(
