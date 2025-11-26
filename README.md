@@ -18,8 +18,22 @@ for eval (specficy the input and output files when running)
 - `filter_users.py` (get active users only)
 - `process_test_users.py` (test/train split per user profile)
 - `query_for_recs.py` (gets recommendations for the train set of the evaluated users)
+- `get_training_data_for_baselines.py`
 - `baseline_recommenders.py` - (gets recommendations for the train set using traditional algorithms: poprec, itemknn, userknn, and matrix factorization)
-- evaluate_recall (not done yet)
+- `evaluate_recall.py`
+
+preliminary results!
+=============================================================================
+RECOMMENDATION ALGORITHM COMPARISON
+=============================================================================
+Algorithm       |   Users |  Recall@10 |  Recall@20 |  Recall@50 | Recall@100
+-----------------------------------------------------------------------------
+mf              |    2485 |     0.0552 |     0.0881 |     0.1474 |     0.2069
+pinpointe       |    2485 |     0.0303 |     0.0497 |     0.0888 |     0.1303
+userknn         |    2485 |     0.0188 |     0.0339 |     0.0659 |     0.0871
+itemknn         |    2485 |     0.0072 |     0.0121 |     0.0207 |     0.0347
+poprec          |    2485 |     0.0048 |     0.0065 |     0.0103 |     0.0216
+-----------------------------------------------------------------------------
 
 COMPLETED
 - embeddings
@@ -53,6 +67,7 @@ roughly balanced clusters, we recursively split large clusters into multiple sma
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better". because maybe like 25% of children just have the same mainstream tastes ya know.
 - MULTI-CLUSTER ASSIGNMENTS - tiptoe also says: "A common technique to increase search quality in clusterbased nearest-neighbor-search is to assign a single document to multiple clusters [26,64]. Following prior work [26], Tiptoe assigns documents to multiple clusters if they are close to cluster boundaries. In particular, Tiptoe assigns 20% of the documents to two clusters and the remaining 80% only to a single cluster, resulting in a roughly 1.2× overhead in server computation and √ 1.2× overhead in communication. We show in §8 that this optimization improves search quality."
 - so, we should also try multi-clustering, i.e. assign each user to the top 3 clusters.
+
 
 
 
