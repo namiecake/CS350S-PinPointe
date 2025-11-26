@@ -1,13 +1,17 @@
 import json
 import random
+from pathlib import Path
+
+script_dir = Path(__file__).parent
+data_dir = script_dir.parent / 'data'
 
 # Input file
-input_file = "goodreads_reviews_children.json"
+input_file = data_dir / "goodreads_reviews_children.json"
 
 # Output files
-output_file_map = "user_map.json"
-output_file_train = "user_train.json"
-output_file_test = "user_test.json"
+output_file_map = data_dir / "user_map.json"
+output_file_train = data_dir / 'server' / "user_train.json"
+output_file_test = data_dir / 'clients' / "user_test.json"
 
 user_map = {}
 
@@ -19,10 +23,11 @@ with open(input_file, "r", encoding="utf-8") as f:
         book_id = data["book_id"]
         rating = data["rating"]
 
-        if user_id not in user_map:
-            user_map[user_id] = []
+        if rating != 0:
+            if user_id not in user_map:
+                user_map[user_id] = []
 
-        user_map[user_id].append({"book_id": book_id, "rating": rating})
+            user_map[user_id].append({"book_id": book_id, "rating": rating})
 
 # Split into train and test sets, with roughly 70% of the data in test and 30% in train
 all_users = list(user_map.keys())
