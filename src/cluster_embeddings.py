@@ -11,6 +11,7 @@ MODIFIED: Also saves the TruncatedSVD model for query-time transformations.
 import json
 import pickle
 import numpy as np
+import copy
 from scipy.sparse import csr_matrix, lil_matrix
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
@@ -88,8 +89,67 @@ def perform_dimensionality_reduction(sparse_matrix, n_components=150, random_sta
     
     return reduced_matrix, svd
 
+def balance_clusters(matrix, labels, cluster_centroids, max_cluster_size=400, min_cluster_size=40, random_state=42):
+    """
+    Recursively balance clusters: split large clusters, merge small clusters,
+    and remove empty clusters.
+    """
+    labels = labels.copy()
+    # Ensure cluster_centroids is a 2D numpy array
+    cluster_centroids = np.vstack([np.array(c) for c in cluster_centroids])
+    
+    # SPLIT LARGE CLUSTERS
+    unique_labels, counts = np.unique(labels, return_counts=True)
+    cluster_sizes = dict(zip(unique_labels, counts))
 
-def perform_clustering(matrix, n_clusters, random_state=42):
+    for cluster_id, size in cluster_sizes.items():
+        if size > max_cluster_size:
+            print(f"  Splitting cluster {cluster_id} ({size} users)")
+            user_indices = np.where(labels == cluster_id)[0]
+            sub_n_clusters = int(np.ceil(size / max_cluster_size))
+            kmeans_sub = KMeans(n_clusters=sub_n_clusters, random_state=random_state)
+            sub_labels = kmeans_sub.fit_predict(matrix[user_indices])
+            
+            # Assign new labels
+            new_label_start = cluster_centroids.shape[0]
+            for i, idx in enumerate(user_indices):
+                labels[idx] = sub_labels[i] + new_label_start
+            
+            # Append new centroids
+            cluster_centroids = np.vstack([cluster_centroids, kmeans_sub.cluster_centers_])
+    
+    # MERGE SMALL CLUSTERS
+    while True:
+        unique_labels = np.unique(labels)
+        cluster_sizes = {cid: np.sum(labels == cid) for cid in unique_labels}
+        small_clusters = [cid for cid, size in cluster_sizes.items() if size < min_cluster_size]
+        if not small_clusters:
+            break
+        
+        for small_id in small_clusters:
+            other_ids = [cid for cid in unique_labels if cid != small_id]
+            distances_to_others = np.linalg.norm(
+                cluster_centroids[small_id] - cluster_centroids[other_ids], axis=1
+            )
+            merge_to = other_ids[np.argmin(distances_to_others)]
+            print(f"  Merging small cluster {small_id} ({cluster_sizes[small_id]} users) into cluster {merge_to} ({cluster_sizes[merge_to]} users)")
+            labels[labels == small_id] = merge_to
+            # Recompute merged cluster centroid
+            indices = np.where(labels == merge_to)[0]
+            cluster_centroids[merge_to] = matrix[indices].mean(axis=0)
+        
+        # Rebuild cluster_centroids array and remove empty clusters
+        unique_labels = np.unique(labels)
+        cluster_centroids = np.array([cluster_centroids[cid] for cid in unique_labels])
+        
+        # Remap labels to 0..N-1
+        label_map = {old: new for new, old in enumerate(unique_labels)}
+        labels = np.array([label_map[l] for l in labels])
+    
+    return labels, cluster_centroids
+
+
+def perform_clustering(matrix, n_clusters, balance_recursively, random_state=42):
     """
     Perform K-Means clustering with cosine similarity (via L2 normalization).
     
@@ -124,7 +184,13 @@ def perform_clustering(matrix, n_clusters, random_state=42):
     )
     
     labels = kmeans.fit_predict(normalized_matrix)
-    
+    cluster_centroids = list(kmeans.cluster_centers_)
+
+    if balance_recursively:
+        print(f"\nBalancing clusters recursively...")
+        labels, cluster_centroids = balance_clusters(normalized_matrix, labels, cluster_centroids)
+        print(f"  Total clusters after balancing: {len(cluster_centroids)}")
+
     print("  Clustering complete!")
     return kmeans, labels, normalized_matrix
 
@@ -327,6 +393,8 @@ def main():
     )
     parser.add_argument('--multi-cluster', action='store_true',
                         help='Assign users to multiple clusters based on proximity')
+    parser.add_argument('--balance-recursively', action='store_true',
+                        help='Balance clusters using a recursive strategy')
     parser.add_argument('--top-k', type=int, default=3,
                         help='Number of clusters to assign each user to (default: 3)')
     parser.add_argument('--distance-threshold', type=float, default=None,
@@ -375,8 +443,10 @@ def main():
     # Perform clustering on reduced data
     kmeans, labels, clustering_matrix = perform_clustering(
         reduced_matrix, 
-        n_clusters
+        n_clusters,
+        args.balance_recursively
     )
+    n_clusters = len(np.unique(labels))
     
     # Compute and display statistics
     cluster_sizes = compute_cluster_statistics(labels, n_clusters)
