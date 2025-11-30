@@ -388,12 +388,10 @@ def main():
     parser = argparse.ArgumentParser(
         description='Cluster user embeddings using dimensionality reduction + K-Means with cosine similarity'
     )
-    parser.add_argument('--multicluster', action='store_true',
-                        help='Assign users to multiple clusters based on proximity')
     parser.add_argument('--balance-recursively', action='store_true',
                         help='Balance clusters using a recursive strategy')
-    parser.add_argument('--top-k', type=int, default=3,
-                        help='Number of clusters to assign each user to (default: 3)')
+    parser.add_argument('--multicluster', type=int, default=None,
+                        help='Assign users to multiple clusters (specify number of clusters per user)')
     parser.add_argument('--distance-threshold', type=float, default=None,
                         help='Optional: only assign to clusters within this distance')
     parser.add_argument('--n-components', type=int, default=100,

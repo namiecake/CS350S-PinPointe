@@ -9,11 +9,17 @@ This script handles the full pipeline for generating recommendations for queryin
 4. Return the pre-computed recommendations for that cluster
 
 Usage:
-    # Generate recommendations for users in a query file
+    # Generate recommendations for users in a query file (single cluster mode)
     python query_recommendations.py --query-file user_embeddings.json --output query_recs.json
     
     # Generate recommendations for a single user (by ID from the embeddings file)
     python query_recommendations.py --user-id "345b3a87c34de1889ede1ca429998776" --embeddings-file user_embeddings.json
+    
+    # Use equal-split multi-assignment to pull from top-k clusters equally
+    python query_recommendations.py --multiassignment-equal 3 --embeddings-file user_embeddings.json
+    
+    # Use proportional multi-assignment to pull from top-k clusters based on similarity
+    python query_recommendations.py --multiassignment-prop 3 --embeddings-file user_embeddings.json
 """
 """
 naomi notes: NOT PRIVATE
@@ -181,8 +187,132 @@ def find_top_k_clusters(user_embedding, centroids, k=3):
     return sorted_clusters[:k]
 
 
+def get_equal_recs_from_clusters(top_clusters, cluster_recommendations, total_recs=100):
+    """
+    Get recommendations from multiple clusters with equal allocation.
+    
+    Args:
+        top_clusters: List of (cluster_id, similarity) tuples, sorted by similarity desc
+        cluster_recommendations: Dict mapping cluster_id -> list of recommendations
+        total_recs: Total number of unique recommendations to return
+    
+    Returns:
+        List of unique recommendation IDs
+    """
+    k = len(top_clusters)
+    
+    # Calculate equal allocation per cluster
+    base_allocation = total_recs // k
+    remainder = total_recs % k
+    
+    allocations = [base_allocation] * k
+    # Distribute remainder to first clusters
+    for i in range(remainder):
+        allocations[i] += 1
+    
+    # Collect recommendations, respecting allocations but ensuring uniqueness
+    seen = set()
+    final_recs = []
+    cluster_recs_used = {cluster_id: 0 for cluster_id, _ in top_clusters}
+    
+    # First pass: get allocated number from each cluster
+    for (cluster_id, _), allocation in zip(top_clusters, allocations):
+        recs = cluster_recommendations.get(cluster_id, [])
+        added = 0
+        
+        for rec in recs:
+            if rec not in seen and added < allocation:
+                seen.add(rec)
+                final_recs.append(rec)
+                added += 1
+                cluster_recs_used[cluster_id] += 1
+        
+        if added < allocation:
+            print(f"Warning: Cluster {cluster_id} only had {added} unique recs, needed {allocation}")
+    
+    # Second pass: if we're short due to duplicates, fill from any cluster
+    if len(final_recs) < total_recs:
+        for cluster_id, _ in top_clusters:
+            recs = cluster_recommendations.get(cluster_id, [])
+            for rec in recs:
+                if rec not in seen:
+                    seen.add(rec)
+                    final_recs.append(rec)
+                    if len(final_recs) >= total_recs:
+                        break
+            if len(final_recs) >= total_recs:
+                break
+    
+    return final_recs[:total_recs]
+
+
+def get_proportional_recs_from_clusters(top_clusters, cluster_recommendations, total_recs=100):
+    """
+    Get recommendations from multiple clusters, with count proportional to similarity.
+    
+    Args:
+        top_clusters: List of (cluster_id, similarity) tuples, sorted by similarity desc
+        cluster_recommendations: Dict mapping cluster_id -> list of recommendations
+        total_recs: Total number of unique recommendations to return
+    
+    Returns:
+        List of unique recommendation IDs
+    """
+    # Extract similarities and normalize to get proportions
+    similarities = np.array([sim for _, sim in top_clusters])
+    
+    # Shift similarities to be positive if any are negative (rare but possible)
+    if similarities.min() < 0:
+        similarities = similarities - similarities.min() + 0.01
+    
+    # Normalize to get proportions that sum to 1
+    proportions = similarities / similarities.sum()
+    
+    # Calculate initial allocation per cluster
+    allocations = (proportions * total_recs).astype(int)
+    
+    # Distribute any remainder to top clusters
+    remainder = total_recs - allocations.sum()
+    for i in range(remainder):
+        allocations[i % len(allocations)] += 1
+    
+    # Collect recommendations, respecting allocations but ensuring uniqueness
+    seen = set()
+    final_recs = []
+    
+    # First pass: get allocated number from each cluster
+    cluster_recs_used = {cluster_id: 0 for cluster_id, _ in top_clusters}
+    
+    for (cluster_id, _), allocation in zip(top_clusters, allocations):
+        recs = cluster_recommendations.get(cluster_id, [])
+        added = 0
+        for rec in recs:
+            if rec not in seen and added < allocation:
+                seen.add(rec)
+                final_recs.append(rec)
+                added += 1
+                cluster_recs_used[cluster_id] += 1
+    
+    # Second pass: if we need more recs (due to overlap), pull from clusters in order
+    if len(final_recs) < total_recs:
+        for cluster_id, _ in top_clusters:
+            recs = cluster_recommendations.get(cluster_id, [])
+            for rec in recs:
+                if rec not in seen:
+                    seen.add(rec)
+                    final_recs.append(rec)
+                    if len(final_recs) >= total_recs:
+                        break
+            if len(final_recs) >= total_recs:
+                break
+    
+    return final_recs[:total_recs]
+
+
 def get_recommendations_for_user(user_sparse_dict, n_books, svd_model, 
-                                  centroids, cluster_recommendations, book_map, top_k_clusters=1,
+                                  centroids, cluster_recommendations, book_map, 
+                                  multiassignment_equal=None, multiassignment_prop=None, 
+                                  top_k_recs=100,
                                   pir_client=None, pir_server=None, use_pir=True):
     """
     Full pipeline: transform user profile -> find cluster -> get recommendations.
@@ -193,7 +323,13 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
         svd_model: Fitted SVD model
         centroids: Cluster centroids
         cluster_recommendations: Pre-computed recommendations per cluster
-        top_k_clusters: Number of clusters to consider (1 for single cluster assignment)
+        book_map: Book index to title mapping
+        multiassignment_equal: If set, number of clusters for equal split
+        multiassignment_prop: If set, number of clusters for proportional split based on similarity
+        top_k_recs: Total number of recommendations to return
+        pir_client: PIR client instance (optional)
+        pir_server: PIR server instance (optional)
+        use_pir: Whether to use PIR for private retrieval
     
     Returns:
         Dictionary with cluster info and recommendations
@@ -201,7 +337,94 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
     # Transform user profile to embedding space
     user_embedding = transform_user_profile(user_sparse_dict, n_books, svd_model)
     
-    if top_k_clusters == 1:
+    # Multi-assignment proportional mode
+    if multiassignment_prop is not None and multiassignment_prop > 1:
+        top_clusters = find_top_k_clusters(user_embedding, centroids, multiassignment_prop)
+        
+        # If using PIR, retrieve recommendations for each cluster privately
+        if use_pir and pir_client is not None and pir_server is not None:
+            # Create a modified cluster_recommendations dict with PIR-retrieved recs
+            pir_cluster_recs = {}
+            for cluster_id, _ in top_clusters:
+                pir_cluster_recs[cluster_id] = retrieve_recommendations_with_pir(
+                    cluster_id, pir_client, pir_server
+                )
+            # Get proportional recommendations using PIR-retrieved data
+            recommendations = get_proportional_recs_from_clusters(
+                top_clusters, pir_cluster_recs, total_recs=top_k_recs
+            )
+        else:
+            # Get proportional recommendations using direct lookup
+            recommendations = get_proportional_recs_from_clusters(
+                top_clusters, cluster_recommendations, total_recs=top_k_recs
+            )
+        
+        # Build cluster info
+        cluster_ids = [cluster_id for cluster_id, _ in top_clusters]
+        cluster_assignment = ", ".join(str(c) for c in cluster_ids)
+        
+        cluster_info = [
+            {'cluster_id': cluster_id, 'similarity': float(similarity)}
+            for cluster_id, similarity in top_clusters
+        ]
+        
+        recs_with_title = []
+        for rec in recommendations:
+            book_title = book_map.get(str(rec), "Unknown")
+            recs_with_title.append([rec, book_title])
+        
+        return {
+            'cluster_assignment': cluster_assignment,
+            'top_clusters': cluster_info,
+            'recommendations': recommendations,  # use recs_with_title to include titles
+            'privacy_preserved': use_pir  # track whether PIR was used
+        }
+    
+    # Multi-assignment equal mode
+    elif multiassignment_equal is not None and multiassignment_equal > 1:
+        top_clusters = find_top_k_clusters(user_embedding, centroids, multiassignment_equal)
+        
+        # If using PIR, retrieve recommendations for each cluster privately
+        if use_pir and pir_client is not None and pir_server is not None:
+            # Create a modified cluster_recommendations dict with PIR-retrieved recs
+            pir_cluster_recs = {}
+            for cluster_id, _ in top_clusters:
+                pir_cluster_recs[cluster_id] = retrieve_recommendations_with_pir(
+                    cluster_id, pir_client, pir_server
+                )
+            # Get equal-split recommendations using PIR-retrieved data
+            recommendations = get_equal_recs_from_clusters(
+                top_clusters, pir_cluster_recs, total_recs=top_k_recs
+            )
+        else:
+            # Get equal-split recommendations using direct lookup
+            recommendations = get_equal_recs_from_clusters(
+                top_clusters, cluster_recommendations, total_recs=top_k_recs
+            )
+        
+        # Build cluster info
+        cluster_ids = [cluster_id for cluster_id, _ in top_clusters]
+        cluster_assignment = ", ".join(str(c) for c in cluster_ids)
+        
+        cluster_info = [
+            {'cluster_id': cluster_id, 'similarity': float(similarity)}
+            for cluster_id, similarity in top_clusters
+        ]
+        
+        recs_with_title = []
+        for rec in recommendations:
+            book_title = book_map.get(str(rec), "Unknown")
+            recs_with_title.append([rec, book_title])
+        
+        return {
+            'cluster_assignment': cluster_assignment,
+            'top_clusters': cluster_info,
+            'recommendations': recommendations,  # use recs_with_title to include titles
+            'privacy_preserved': use_pir  # track whether PIR was used
+        }
+    
+    # Single cluster mode (default)
+    else:
         # Single cluster assignment
         cluster_id, similarity, _ = find_nearest_cluster(user_embedding, centroids)
         
@@ -217,7 +440,7 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
         
         recs_with_title = []
         for rec in recommendations:
-            book_title = book_map[str(rec)]
+            book_title = book_map.get(str(rec), "Unknown")
             recs_with_title.append([rec, book_title])
         
         return {
@@ -226,52 +449,29 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
             'recommendations': recommendations, #use recs_with_title to include titles to visualize recs
             'privacy-preserved': use_pir # track whether or not PIR was used to serve this rec
         }
-    else:
-        # Multi-cluster assignment
-        top_clusters = find_top_k_clusters(user_embedding, centroids, top_k_clusters)
-        
-        # Aggregate recommendations from top clusters (deduplicated, ordered by first appearance)
-        seen = set()
-        aggregated_recs = []
-        cluster_info = []
-        
-        for cluster_id, similarity in top_clusters:
-            cluster_info.append({
-                'cluster_id': cluster_id,
-                'similarity': float(similarity)
-            })
-            # Use PIR if available, otherwise direct lookup
-            if use_pir and pir_client is not None and pir_server is not None:
-                recs = retrieve_recommendations_with_pir(
-                    cluster_id, pir_client, pir_server
-                )
-            else:
-                recs = cluster_recommendations.get(cluster_id, [])            
-            for rec in recs:
-                if rec not in seen:
-                    seen.add(rec)
-                    aggregated_recs.append(rec)
-        
-        return {
-            'top_clusters': cluster_info,
-            'recommendations': aggregated_recs,
-            'privacy_preserved': use_pir
-        }
 
 
 def process_query_users(embeddings_data, svd_model, centroids, 
-                        cluster_recommendations, n_books, book_map, top_k_clusters=1,
+                        cluster_recommendations, n_books, book_map, 
+                        multiassignment_equal=None, multiassignment_prop=None, 
+                        top_k_recs=100,
                         pir_client=None, pir_server=None, use_pir=True):
     """
     Process all users in a query embeddings file.
     
     Args:
-        query_embeddings_path: Path to user embeddings JSON file
+        embeddings_data: Loaded embeddings data
         svd_model: Fitted SVD model
         centroids: Cluster centroids
         cluster_recommendations: Pre-computed recommendations per cluster
         n_books: Total number of books
-        top_k_clusters: Number of clusters to consider per user
+        book_map: Book index to title mapping
+        multiassignment_equal: If set, number of clusters for equal split
+        multiassignment_prop: If set, number of clusters for proportional assignment
+        top_k_recs: Number of recommendations per user
+        pir_client: PIR client instance (optional)
+        pir_server: PIR server instance (optional)
+        use_pir: Whether to use PIR for private retrieval
     
     Returns:
         Dictionary mapping user_id -> recommendations info
@@ -279,6 +479,12 @@ def process_query_users(embeddings_data, svd_model, centroids,
     user_vectors = embeddings_data['user_vectors']
     
     print(f"  Found {len(user_vectors)} users to process")
+    if multiassignment_prop:
+        print(f"  Using multi-assignment proportional with {multiassignment_prop} clusters")
+    elif multiassignment_equal:
+        print(f"  Using multi-assignment equal split with {multiassignment_equal} clusters")
+    else:
+        print(f"  Using single cluster assignment")
     
     results = {}
     
@@ -288,7 +494,8 @@ def process_query_users(embeddings_data, svd_model, centroids,
         
         result = get_recommendations_for_user(
             sparse_dict, n_books, svd_model, centroids, 
-            cluster_recommendations, book_map, top_k_clusters,
+            cluster_recommendations, book_map, 
+            multiassignment_equal, multiassignment_prop, top_k_recs,
             pir_client=pir_client, pir_server=pir_server, use_pir=use_pir
         )
         results[user_id] = result
@@ -336,8 +543,10 @@ def main():
                         help='Output path for recommendations (default: user_recs.json)')
     
     # Algorithm options
-    parser.add_argument('--top-k-clusters', type=int, default=1,
-                        help='Number of clusters to consider per user (default: 1)')
+    parser.add_argument('--multiassignment-equal', type=int, default=None,
+                        help='Pull recommendations from top-k clusters with equal split')
+    parser.add_argument('--multiassignment-prop', type=int, default=None,
+                        help='Pull recommendations from top-k clusters proportionally based on similarity')
     parser.add_argument('--top-k-recs', type=int, default=100,
                         help='Number of recommendations to return per user (default: 100)')
     
@@ -423,13 +632,10 @@ def main():
         user_sparse_dict = user_vectors[args.user_id]
         result = get_recommendations_for_user(
             user_sparse_dict, n_books, svd_model, centroids,
-            cluster_recommendations, book_idx_to_title, args.top_k_clusters,
+            cluster_recommendations, book_idx_to_title, 
+            args.multiassignment_equal, args.multiassignment_prop, args.top_k_recs,
             pir_client=pir_client, pir_server=pir_server, use_pir=args.use_pir
         )
-        
-        # Truncate recommendations
-        if 'recommendations' in result:
-            result['recommendations'] = result['recommendations'][:args.top_k_recs]
         
         print(f"\nResults for user {args.user_id}:")
         print(json.dumps(result, indent=2))
@@ -441,19 +647,16 @@ def main():
         # get recommendations for everyone
         results = process_query_users(
             embeddings_data, svd_model, centroids,
-            cluster_recommendations, n_books, book_idx_to_title, args.top_k_clusters
+            cluster_recommendations, n_books, book_idx_to_title, 
+            args.multiassignment_equal, args.multiassignment_prop, args.top_k_recs,
+            pir_client=pir_client, pir_server=pir_server, use_pir=args.use_pir
         )
-        
-        # Truncate recommendations for each user
-        for user_id in results:
-            if 'recommendations' in results[user_id]:
-                results[user_id]['recommendations'] = \
-                    results[user_id]['recommendations'][:args.top_k_recs]
     
         # Save results
         metadata = {
             'n_users': len(results),
-            'top_k_clusters': args.top_k_clusters,
+            'multiassignment_equal': args.multiassignment_equal,
+            'multiassignment_prop': args.multiassignment_prop,
             'top_k_recs': args.top_k_recs,
             'svd_components': svd_model.n_components
         }
