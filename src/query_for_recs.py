@@ -32,8 +32,17 @@ import argparse
 import numpy as np
 from pathlib import Path
 from scipy.sparse import lil_matrix, csr_matrix
+from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import normalize
 
+# Import PIR functionality
+from pir.pir_scheme import (
+    PIRClient, 
+    PIRServer, 
+    setup_pir_database,
+    retrieve_recommendations_with_pir,
+    load_pir_server
+)
 
 def load_json_file(filepath):
     """Load a JSON file and return the data."""
@@ -173,7 +182,8 @@ def find_top_k_clusters(user_embedding, centroids, k=3):
 
 
 def get_recommendations_for_user(user_sparse_dict, n_books, svd_model, 
-                                  centroids, cluster_recommendations, book_map, top_k_clusters=1):
+                                  centroids, cluster_recommendations, book_map, top_k_clusters=1,
+                                  pir_client=None, pir_server=None, use_pir=True):
     """
     Full pipeline: transform user profile -> find cluster -> get recommendations.
     
@@ -194,7 +204,16 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
     if top_k_clusters == 1:
         # Single cluster assignment
         cluster_id, similarity, _ = find_nearest_cluster(user_embedding, centroids)
-        recommendations = cluster_recommendations.get(cluster_id, [])
+        
+        # Use PIR if available, otherwise direct lookup
+        if use_pir and pir_client is not None and pir_server is not None:
+            # PRIVATE retrieval using PIR
+            recommendations = retrieve_recommendations_with_pir(
+                cluster_id, pir_client, pir_server
+            )
+        # Non-private direct lookup
+        else:
+            recommendations = cluster_recommendations.get(cluster_id, [])
         
         recs_with_title = []
         for rec in recommendations:
@@ -204,7 +223,8 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
         return {
             'cluster_id': cluster_id,
             'similarity': float(similarity),
-            'recommendations': recommendations #use recs_with_title to include titles to visualize recs
+            'recommendations': recommendations, #use recs_with_title to include titles to visualize recs
+            'privacy-preserved': use_pir # track whether or not PIR was used to serve this rec
         }
     else:
         # Multi-cluster assignment
@@ -220,7 +240,13 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
                 'cluster_id': cluster_id,
                 'similarity': float(similarity)
             })
-            recs = cluster_recommendations.get(cluster_id, [])
+            # Use PIR if available, otherwise direct lookup
+            if use_pir and pir_client is not None and pir_server is not None:
+                recs = retrieve_recommendations_with_pir(
+                    cluster_id, pir_client, pir_server
+                )
+            else:
+                recs = cluster_recommendations.get(cluster_id, [])            
             for rec in recs:
                 if rec not in seen:
                     seen.add(rec)
@@ -228,12 +254,14 @@ def get_recommendations_for_user(user_sparse_dict, n_books, svd_model,
         
         return {
             'top_clusters': cluster_info,
-            'recommendations': aggregated_recs
+            'recommendations': aggregated_recs,
+            'privacy_preserved': use_pir
         }
 
 
 def process_query_users(embeddings_data, svd_model, centroids, 
-                        cluster_recommendations, n_books, book_map, top_k_clusters=1):
+                        cluster_recommendations, n_books, book_map, top_k_clusters=1,
+                        pir_client=None, pir_server=None, use_pir=True):
     """
     Process all users in a query embeddings file.
     
@@ -260,7 +288,8 @@ def process_query_users(embeddings_data, svd_model, centroids,
         
         result = get_recommendations_for_user(
             sparse_dict, n_books, svd_model, centroids, 
-            cluster_recommendations, book_map, top_k_clusters
+            cluster_recommendations, book_map, top_k_clusters,
+            pir_client=pir_client, pir_server=pir_server, use_pir=use_pir
         )
         results[user_id] = result
     
@@ -316,6 +345,10 @@ def main():
     parser.add_argument('--data-dir', type=str, default=None,
                         help='Base data directory (default: ../data relative to script)')
     
+    # Option to disable PIR (for testing purposes)
+    parser.add_argument('--no-pir', dest='use_pir', action='store_false', default=True,
+                        help='Disable PIR and use direct lookup')
+    
     args = parser.parse_args()
     
     # Resolve paths
@@ -334,6 +367,9 @@ def main():
     embeddings_path = eval_dir / args.embeddings_file
     book_title_path = script_dir.parent / 'data' / 'book_index_to_title.json'
     
+    pir_server_path = server_dir.parent / 'pir_server.npz'
+    pir_params_path = server_dir.parent / 'pir_params.json'
+
     # Load models and data
     print("="*60)
     print("LOADING MODELS AND DATA")
@@ -348,6 +384,25 @@ def main():
     n_books = cluster_metadata.get('n_books') or svd_model.n_features_in_
     print(f"  Number of books: {n_books}")
     
+    #  Load PIR system unless otherwise requested
+    pir_client = None
+    pir_server = None
+    if args.use_pir:
+        print("\nLoading PIR system...")
+        try:
+            pir_server = load_pir_server(pir_server_path)
+            with open(pir_params_path, 'r') as f:
+                pir_params = json.load(f)
+            pir_client = PIRClient(pir_params)
+            print("  ✓ PIR system loaded successfully!")
+        except FileNotFoundError as e:
+            print(f"  ✗ PIR files not found: {e}")
+            print(f"  → Run 'python setup_pir.py' first to generate PIR database")
+            print(f"  → Falling back to non-private retrieval")
+            args.use_pir = False
+    else:
+        print("\nPIR disabled - using non-private retrieval")
+
     # Process based on input type
     print("\n" + "="*60)
     print("GENERATING RECOMMENDATIONS")
@@ -368,7 +423,8 @@ def main():
         user_sparse_dict = user_vectors[args.user_id]
         result = get_recommendations_for_user(
             user_sparse_dict, n_books, svd_model, centroids,
-            cluster_recommendations, book_idx_to_title, args.top_k_clusters
+            cluster_recommendations, book_idx_to_title, args.top_k_clusters,
+            pir_client=pir_client, pir_server=pir_server, use_pir=args.use_pir
         )
         
         # Truncate recommendations
