@@ -1,6 +1,15 @@
 ﻿# CS350S-PinPointe
 
-updates:
+## more accurate jank setup guide (in progress):##
+ 
+getting `book_id_to_index.json`:
+ it's best to just pull the one from the github, that one has all books in the full dataset including books that were filtered out of ratings. however, to reproduce this version:
+ - go to `process_dataset.py` and comment out the if-statement on line 27 (but still run the code in the if-statement), then run
+ - run `create_embeddings.py --dataset books`, which gives you `book_id_to_index.json`
+ - go back to `process_dataset.py` and restore the if-statement and run this again, then run `create_embeddings.py --dataset all`
+
+----
+older updates:
 
 i moved stuff around folders a lot so if you're getting 'file not found' errors, just update the paths lol ><
 btw i did change the dataset. so rerun the process_dataset and everything lol
@@ -67,6 +76,7 @@ roughly balanced clusters, we recursively split large clusters into multiple sma
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better". because maybe like 25% of children just have the same mainstream tastes ya know.
 - MULTI-CLUSTER ASSIGNMENTS - tiptoe also says: "A common technique to increase search quality in clusterbased nearest-neighbor-search is to assign a single document to multiple clusters [26,64]. Following prior work [26], Tiptoe assigns documents to multiple clusters if they are close to cluster boundaries. In particular, Tiptoe assigns 20% of the documents to two clusters and the remaining 80% only to a single cluster, resulting in a roughly 1.2× overhead in server computation and √ 1.2× overhead in communication. We show in §8 that this optimization improves search quality."
 - so, we should also try multi-clustering, i.e. assign each user to the top 3 clusters.
+
 
 
 
