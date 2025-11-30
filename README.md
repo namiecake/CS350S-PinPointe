@@ -1,6 +1,6 @@
 ﻿# CS350S-PinPointe
 
-## more accurate jank setup guide (in progress):##
+## jank but accurate setup guide: ##
 
 getting the right data:
 - go to util and run `book_stats_dedup.py` -- this combines books with the exact same title into one ID. then take the two output files (ending in `_dedup`), rename them to take out the `_dedup`, and delete the old goodreads json files. use these ones instead!
@@ -11,10 +11,32 @@ getting `book_id_to_index.json`:
  - run `create_embeddings.py --dataset books`, which gives you `book_id_to_index.json`
  - go back to `process_dataset.py` and restore the if-statement and run this again, then run `create_embeddings.py --dataset all`
 
-----
-older updates:
+preparing for eval:
+we evaluate by taking the active users in the test set (20+ ratings, with at least 10 being 4-5 stars), and splitting each user profile into a train/test set
+- run `filter_users.py` _path-to-user_embeddings_test.json path-to-new-file-active_users_embeddings_test.json_ --min-total 20 --min-relevant 10
+- put active_users_embeddings_test.json in data/server btw
+- run `process_test_users.py` to get the test/train split per user profile -> `train_user_profiles.json` and `test_user_profiles.json`. only takes users who have at least five 4-5 star ratings in their test set
 
-i moved stuff around folders a lot so if you're getting 'file not found' errors, just update the paths lol ><
+getting results for the baseline algorithms (poprec, itemknn, userknn, mf):
+can just see the numbers in the table below - these stay the same no matter what, but here are steps to reproduce:
+- prereq: make sure you have generated the `train_user_profiles.json` file
+- run `get_training_data_for_baselines.py` from util to do exactly that
+- run `baseline_recommenders.py --algorithm all` -- note: itemknn and userknn take a while! each outputs a file called {algo}_train_recs.json
+- run `evaluate_recall.py`
+
+getting recommendations and evaluating pinpointe:
+- `filter_users.py path-to-user_embeddings_train path-to-user_embeddings_train --min-total 5 --min-relevant 0` - performs better when we only train with users with 5+ ratings, other users are just noise
+- `cluster_embeddings.py` -> `user_clusters.json`, `svd_model.pkl` (saved SVD model)
+- `generate_cluster_recs.py` -> `recs_per_cluster.json`
+- `query_for_recs.py` -> `pinpointe_train_recs.json`
+-  run `evaluate_recall.py`
+
+yay!
+
+--------
+##older updates:##
+
+if you're getting 'file not found' errors, just update the paths lol
 btw i did change the dataset. so rerun the process_dataset and everything lol
 
 if changing the dataset, run:
@@ -28,7 +50,7 @@ if changing the dataset, run:
 if pulling from this repo, run `cluster_embeddings.py` and `generate_cluster_recs.py` to get the saved SVD model since it's too large to add to the repo
 
 
-for eval (specficy the input and output files when running)
+for eval (specify the input and output files when running)
 - `filter_users.py` (get active users only)
 - `process_test_users.py` (test/train split per user profile)
 - **`query_for_recs.py`** (gets recommendations for the train set of the evaluated users): `python query_for_recs.py --embeddings-file train_user_profiles.json`
@@ -79,6 +101,7 @@ roughly balanced clusters, we recursively split large clusters into multiple sma
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better". because maybe like 25% of children just have the same mainstream tastes ya know.
 - MULTI-CLUSTER ASSIGNMENTS - tiptoe also says: "A common technique to increase search quality in clusterbased nearest-neighbor-search is to assign a single document to multiple clusters [26,64]. Following prior work [26], Tiptoe assigns documents to multiple clusters if they are close to cluster boundaries. In particular, Tiptoe assigns 20% of the documents to two clusters and the remaining 80% only to a single cluster, resulting in a roughly 1.2× overhead in server computation and √ 1.2× overhead in communication. We show in §8 that this optimization improves search quality."
 - so, we should also try multi-clustering, i.e. assign each user to the top 3 clusters.
+
 
 
 
