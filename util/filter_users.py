@@ -18,6 +18,7 @@ def filter_users(input_path, output_path, min_total_ratings, min_relevant_rating
     with open(input_path, 'r') as f:
         data = json.load(f)
     
+    num_books = data.get('metadata')['n_books']
     user_vectors = data.get('user_vectors', {})
     original_count = len(user_vectors)
     
@@ -53,7 +54,7 @@ def filter_users(input_path, output_path, min_total_ratings, min_relevant_rating
     output_data = {
         "metadata": {
             "n_users": filtered_count,
-            "n_books": len(all_books),
+            "n_books": num_books, # caeley note: changed this back to be the original number of books bc otherwise get OOB errors for book indices
             "vector_format": data.get('metadata', {}).get('vector_format', 'sparse_dict'),
             "min_total_ratings_filter": min_total_ratings,
             "min_relevant_ratings_filter": min_relevant_ratings,
@@ -67,6 +68,7 @@ def filter_users(input_path, output_path, min_total_ratings, min_relevant_rating
     print(f"\nFiltered number of users: {filtered_count}")
     print(f"Users removed: {original_count - filtered_count}")
     print(f"Unique books in filtered data: {len(all_books)}")
+    print(f"Overall number of books (value saved in metadata): {num_books}")
     print(f"Total ratings in filtered data: {total_ratings}")
     print(f"Total relevant ratings (4-5 stars): {total_relevant}")
 

@@ -36,7 +36,6 @@ def load_embeddings(filepath):
     print(f"  Loaded {n_users} users with {n_books}-dimensional vectors")
     return user_vectors, n_users, n_books
 
-
 def convert_to_sparse_matrix(user_vectors, n_books):
     """Convert dictionary of sparse vectors to scipy sparse matrix."""
     print("\nConverting to sparse matrix...")
@@ -284,6 +283,7 @@ def assign_multiple_clusters(clustering_matrix, kmeans, user_ids, top_k=3, dista
     assignment_counts = [len(a.split(", ")) for a in multi_assignments.values()]
     print(f"  Average clusters per user: {np.mean(assignment_counts):.2f}")
     print(f"  Max clusters per user: {np.max(assignment_counts)}")
+    print(f"  Min clusters per user: {np.min(assignment_counts)}")
     
     if distance_threshold:
         single_cluster = sum(1 for c in assignment_counts if c == 1)
@@ -388,17 +388,12 @@ def main():
     parser = argparse.ArgumentParser(
         description='Cluster user embeddings using dimensionality reduction + K-Means with cosine similarity'
     )
-<<<<<<< Updated upstream
-    parser.add_argument('--multi-cluster', action='store_true',
+    parser.add_argument('--multicluster', action='store_true',
                         help='Assign users to multiple clusters based on proximity')
     parser.add_argument('--balance-recursively', action='store_true',
                         help='Balance clusters using a recursive strategy')
     parser.add_argument('--top-k', type=int, default=3,
                         help='Number of clusters to assign each user to (default: 3)')
-=======
-    parser.add_argument('--multicluster', type=int, default=None,
-                        help='Assign users to multiple clusters (specify number of clusters per user)')
->>>>>>> Stashed changes
     parser.add_argument('--distance-threshold', type=float, default=None,
                         help='Optional: only assign to clusters within this distance')
     parser.add_argument('--n-components', type=int, default=100,
