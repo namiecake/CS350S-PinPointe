@@ -6,6 +6,7 @@ This version uses standard scikit-learn without spherecluster dependency.
 
 literally the same as the other script but saves the svd model
 MODIFIED: Also saves the TruncatedSVD model for query-time transformations.
+MODIFIED: --multicluster option takes an integer for number of clusters per user.
 """
 
 import json
@@ -253,7 +254,7 @@ def assign_multiple_clusters(clustering_matrix, kmeans, user_ids, top_k=3, dista
         distance_threshold: If provided, only assign to clusters within this distance
     
     Returns:
-        Dictionary mapping user_id to list of (cluster_id, distance) tuples
+        Dictionary mapping user_id to comma-separated string of cluster IDs (ordered by proximity)
     """
     print(f"\nAssigning users to top-{top_k} nearest clusters...")
     
@@ -271,20 +272,16 @@ def assign_multiple_clusters(clustering_matrix, kmeans, user_ids, top_k=3, dista
             if len(valid_clusters) == 0:
                 # If no clusters within threshold, assign to closest
                 valid_clusters = [np.argmin(user_distances)]
-            sorted_indices = valid_clusters[np.argsort(user_distances[valid_clusters])]
+            sorted_indices = valid_clusters[np.argsort(user_distances[valid_clusters])][:top_k]
         else:
             # Just get top-k
             sorted_indices = np.argsort(user_distances)[:top_k]
         
-        # Store cluster IDs and distances
-        cluster_assignments = [
-            (int(cluster_id), float(user_distances[cluster_id])) 
-            for cluster_id in sorted_indices
-        ]
-        multi_assignments[user_id] = cluster_assignments
+        # Store cluster IDs as comma-separated string
+        multi_assignments[user_id] = ", ".join(str(int(c)) for c in sorted_indices)
     
     # Compute statistics
-    assignment_counts = [len(assignments) for assignments in multi_assignments.values()]
+    assignment_counts = [len(a.split(", ")) for a in multi_assignments.values()]
     print(f"  Average clusters per user: {np.mean(assignment_counts):.2f}")
     print(f"  Max clusters per user: {np.max(assignment_counts)}")
     
@@ -336,7 +333,11 @@ def save_clustering_results(user_ids, labels, kmeans, cluster_sizes, output_path
     print(f"\nSaving clustering results to {output_path}...")
     
     # Create user_id to cluster mapping
-    user_to_cluster = {user_ids[i]: int(labels[i]) for i in range(len(user_ids))}
+    # If multi_assignments provided, use that format; otherwise single cluster
+    if multi_assignments is not None:
+        user_to_cluster = multi_assignments
+    else:
+        user_to_cluster = {user_ids[i]: int(labels[i]) for i in range(len(user_ids))}
     
     # Save cluster centroids (these are in the reduced, normalized space)
     cluster_centroids = {
@@ -377,10 +378,6 @@ def save_clustering_results(user_ids, labels, kmeans, cluster_sizes, output_path
     else:
         output_data['metadata']['centroid_space'] = 'original'
     
-    # Add multi-cluster assignments if available
-    if multi_assignments is not None:
-        output_data['multi_cluster_assignments'] = multi_assignments
-    
     with open(output_path, 'w') as f:
         json.dump(output_data, f, indent=2)
     
@@ -391,16 +388,21 @@ def main():
     parser = argparse.ArgumentParser(
         description='Cluster user embeddings using dimensionality reduction + K-Means with cosine similarity'
     )
+<<<<<<< Updated upstream
     parser.add_argument('--multi-cluster', action='store_true',
                         help='Assign users to multiple clusters based on proximity')
     parser.add_argument('--balance-recursively', action='store_true',
                         help='Balance clusters using a recursive strategy')
     parser.add_argument('--top-k', type=int, default=3,
                         help='Number of clusters to assign each user to (default: 3)')
+=======
+    parser.add_argument('--multicluster', type=int, default=None,
+                        help='Assign users to multiple clusters (specify number of clusters per user)')
+>>>>>>> Stashed changes
     parser.add_argument('--distance-threshold', type=float, default=None,
                         help='Optional: only assign to clusters within this distance')
     parser.add_argument('--n-components', type=int, default=100,
-                        help='Number of SVD components for dimensionality reduction (default: 300)')
+                        help='Number of SVD components for dimensionality reduction (default: 100)')
     parser.add_argument('--svd-output', type=str, default='svd_model.pkl',
                         help='Output path for SVD model (default: svd_model.pkl)')
     
@@ -456,13 +458,13 @@ def main():
     
     # Optional: multi-cluster assignment
     multi_assignments = None
-    if args.multi_cluster:
+    if args.multicluster is not None:
         print("\n" + "="*50)
         print("MULTI-CLUSTER ASSIGNMENT")
         print("="*50)
         multi_assignments = assign_multiple_clusters(
             clustering_matrix, kmeans, user_ids, 
-            top_k=args.top_k,
+            top_k=args.multicluster,
             distance_threshold=args.distance_threshold
         )
     

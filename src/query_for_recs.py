@@ -318,7 +318,7 @@ def main():
     )
     
     # Input options
-    parser.add_argument('--embeddings-file', type=str, default='active_users_embeddings_test.json',
+    parser.add_argument('--embeddings-file', type=str, default='train_user_profiles.json',
                         help='Path to querying user embeddings JSON file')
     parser.add_argument('--user-id', type=str,
                         help='Single user ID to query (requires --embeddings-file)')

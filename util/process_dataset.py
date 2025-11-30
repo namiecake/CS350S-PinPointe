@@ -23,6 +23,7 @@ with open(input_file, "r", encoding="utf-8") as f:
         book_id = data["book_id"]
         rating = data["rating"]
 
+        # note; comment out the rating != 0 if statement to get the true book ID to index map later on
         if rating != 0:
             if user_id not in user_map:
                 user_map[user_id] = []
@@ -38,7 +39,7 @@ random.shuffle(all_users)
 
 user_split = int(0.3 * len(all_users))  # 30% train, 70% test
 train_users = set(all_users[:user_split])
-test_users = set(all_users[:user_split])
+# test_users = set(all_users[:user_split]) # weird line/dead code
 
 train_dict = {}
 test_dict = {}

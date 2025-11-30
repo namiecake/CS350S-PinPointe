@@ -486,7 +486,7 @@ def main():
     print(f"Loading training data from {train_input_path}...")
     metadata, user_vectors = load_data(train_input_path)
     n_users = metadata.get('n_users', len(user_vectors))
-    n_books = metadata.get('n_books', 96273)  # Default if not in metadata
+    n_books = metadata.get('n_books')  # Default if not in metadata
     print(f"Loaded {n_users} users, {n_books} books")
     
     # Load evaluation user IDs
