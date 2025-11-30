@@ -25,10 +25,12 @@ can just see the numbers in the table below - these stay the same no matter what
 - run `evaluate_recall.py`
 
 ### getting recommendations and evaluating pinpointe:
+*NOTE: was a small bug in filter users, so may want to rerun the `create_embeddings.py --dataset all` before running the filter users below
 - `filter_users.py path-to-user_embeddings_train path-to-user_embeddings_train --min-total 5 --min-relevant 0` - performs better when we only train with users with 5+ ratings, other users are just noise
 - `cluster_embeddings.py` -> `user_clusters.json`, `svd_model.pkl` (saved SVD model)
 - `generate_cluster_recs.py` -> `recs_per_cluster.json`
-- `query_for_recs.py` -> `pinpointe_train_recs.json`
+- `setup_pir.py` (sets up the PIR server)
+- `query_for_recs.py` -> `pinpointe_train_recs.json` (this automatically runs PIR by default, to test with no pir use --no-pir flag)
 -  run `evaluate_recall.py`
 
 yay!
