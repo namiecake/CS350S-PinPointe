@@ -221,7 +221,7 @@ def main():
     data_dir = script_dir.parent / 'data'
 
     # Resolve paths
-    input_path = data_dir / Path(args.input)
+    input_path = data_dir / 'clients' / Path(args.input)
     output_train_path = data_dir / 'eval' / Path(args.output_train)
     output_test_path = data_dir / 'eval' / Path(args.output_test)
     

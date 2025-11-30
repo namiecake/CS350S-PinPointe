@@ -102,13 +102,14 @@ def main():
     data_dir = script_dir.parent / 'data'
     full_embeddings_path = data_dir / args.full_embeddings
     train_profiles_path = data_dir / 'eval' / args.train_profiles
+    output_path = data_dir / 'eval' / args.output
 
     
     # Run the replacement
     stats = replace_user_embeddings(
         full_embeddings_path,
         train_profiles_path,
-        args.output
+        output_path
     )
     
     # Print summary
@@ -127,7 +128,7 @@ def main():
         else:
             print(f"  First 10 missing: {stats['users_not_found_in_full'][:10]}")
     
-    print(f"\nOutput written to: {args.output}")
+    print(f"\nOutput written to: {output_path}")
 
 
 if __name__ == '__main__':

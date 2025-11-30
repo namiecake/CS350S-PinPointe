@@ -28,8 +28,8 @@ def save_json_lines(data, filename):
 def main():
     # Load datasets
     print("Loading datasets...")
-    reviews = load_json_lines('goodreads_reviews_children.json')
-    books = load_json_lines('goodreads_books_children.json')
+    reviews = load_json_lines('../data/goodreads_reviews_children.json')
+    books = load_json_lines('../data/goodreads_books_children.json')
     
     print(f"Loaded {len(reviews):,} reviews")
     print(f"Loaded {len(books):,} books")
@@ -209,8 +209,8 @@ def main():
     print("\n" + "=" * 80)
     print("SAVING DEDUPLICATED DATASETS")
     print("=" * 80)
-    save_json_lines(deduplicated_books, 'goodreads_books_children_dedup.json')
-    save_json_lines(deduplicated_reviews, 'goodreads_reviews_children_dedup.json')
+    save_json_lines(deduplicated_books, '../data/goodreads_books_children_dedup.json')
+    save_json_lines(deduplicated_reviews, '../data/goodreads_reviews_children_dedup.json')
     
     # Verify deduplication
     print("\n" + "=" * 80)
