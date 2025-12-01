@@ -4,7 +4,7 @@
  
  results here!: https://docs.google.com/spreadsheets/d/1VuNzrv8lEP68u9SJCrAJFcX423gDiUkjQUrhptcLOLU/edit?usp=sharing
  
- best experiment: n_components 300, assign users to 5 clusters each, retrieve 5 nearest clusters (wack)
+ best experiment: n_components 300, assign users to 5 clusters each, generate recs proportionally, retrieve 5 nearest clusters proportionally (wack)
  
  results:
  pinpointe       |    2485 |     0.0323 |     0.0523 |     0.0953 |     0.1458
@@ -15,12 +15,12 @@
 Step 1: Cluster
 > **python3 cluster_embeddings.py --multicluster [# clusters to assign each user to]**
 > 
-> add  --n-components [int, default 100] if you want to change the number of components (not crazy important lol)
+> optional: add  --n-components [int, default 100] if you want to change the number of components (not crazy important lol)
 
 Step 2: Generate cluster recommendations (uses the new clusters)
 > **python3 generate_cluster_recs.py**
 > 
-> add --equal-weights if you want each user to contribute recs equally to the cluster. otherwise they will contribute based priority/cluster rank
+> optional: add --equal-weights if you want each user to contribute recs equally to the cluster. otherwise they will contribute based priority/cluster rank
 
 Step 3: Query
 > **python3 query_for_recs.py --multiassignment_prop [# clusters to query]**
@@ -136,6 +136,7 @@ i use spherical kmeans clustering (i.e. kmeans on l2 normalized data) which uses
 older TODO:
 - BALANCE CLUSTERS - the tiptoe paper says that " To obtain roughly balanced clusters, we recursively split large clusters into multiple smaller ones".  I don't think it's super important to have like equal size clusters but at least maybe split up that huge cluster.
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better.
+
 
 
 
