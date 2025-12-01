@@ -9,7 +9,8 @@
  results:
  pinpointe       |    2485 |     0.0323 |     0.0523 |     0.0953 |     0.1458
  
-**To run experiments: ** (i'm done running them tho LOL)
+**To run experiments:**
+(i'm done running them tho LOL)
 
 Step 1: Cluster
 > **python3 cluster_embeddings.py --multicluster [# clusters to assign each user to]**
@@ -135,6 +136,7 @@ i use spherical kmeans clustering (i.e. kmeans on l2 normalized data) which uses
 older TODO:
 - BALANCE CLUSTERS - the tiptoe paper says that " To obtain roughly balanced clusters, we recursively split large clusters into multiple smaller ones".  I don't think it's super important to have like equal size clusters but at least maybe split up that huge cluster.
 - anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better.
+
 
 
 
