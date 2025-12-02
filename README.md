@@ -4,10 +4,10 @@
  
  results here!: https://docs.google.com/spreadsheets/d/1VuNzrv8lEP68u9SJCrAJFcX423gDiUkjQUrhptcLOLU/edit?usp=sharing
  
- best experiment: n_components 300, assign users to 5 clusters each, generate recs proportionally, retrieve 5 nearest clusters proportionally (wack)
+ best experiment for 30/70 split: n_components 300, assign users to 5 clusters each, generate recs proportionally, retrieve 5 nearest clusters proportionally
  
- results:
- pinpointe       |    2485 |     0.0323 |     0.0523 |     0.0953 |     0.1458
+best results:
+pinpointe       |    2485 |     0.0323 |     0.0523 |     0.0953 |     0.1458
  
 **To run experiments:**
 (i'm done running them tho LOL)
@@ -31,7 +31,7 @@ Step 4: Run Eval
 > **python3 eval/evaluate_recall.py**
 
 
-## jank but accurate setup guide: ##
+## setup guide: ##
 
 ### getting the right data:
 - go to util and run `book_stats_dedup.py` -- this combines books with the exact same title into one ID. then take the two output files (ending in `_dedup`), rename them to take out the `_dedup`, and delete the old goodreads json files. use these ones instead!
@@ -66,41 +66,7 @@ can just see the numbers in the table below - these stay the same no matter what
 
 yay!
 
-### STILL TODO:
-- simplePIR retrieval i.e. the whole point lol
-- local item re-ranking
-- evaluating NDCG metric (do it after item re-ranking is done)
-- experiments (train/test split threshold)
-- writeup!
-
---------
-## older updates: ##
-
-#### older setup guide: 
-
-if you're getting 'file not found' errors, just update the paths lol
-btw i did change the dataset. so rerun the process_dataset and everything lol
-
-if changing the dataset, run:
-- `process_dataset.py` -> `user_map.json`, `user_train.json`, `user_test.json
-- `create_embeddings.py` -> `user_embeddings.json`, `user_embeddings_train.json`, `user_embeddings_test.json`
-- `filter_users.py path-to-user_embeddings_train path-to-user_embeddings_train --min-total 5 --min-relevant 0` - performs better when we only train with users with 5+ ratings, other users are just noise
-- `cluster_embeddings.py` -> `user_clusters.json`, `svd_model.pkl` (saved SVD model)
-- `generate_cluster_recs.py` -> `recs_per_cluster.json`
-
-
-if pulling from this repo, run `cluster_embeddings.py` and `generate_cluster_recs.py` to get the saved SVD model since it's too large to add to the repo
-
-
-for eval (specify the input and output files when running)
-- `filter_users.py` (get active users only)
-- `process_test_users.py` (test/train split per user profile)
-- **`query_for_recs.py`** (gets recommendations for the train set of the evaluated users): `python query_for_recs.py --embeddings-file train_user_profiles.json`
-- `get_training_data_for_baselines.py`
-- `baseline_recommenders.py` - (gets recommendations for the train set using traditional algorithms: poprec, itemknn, userknn, and matrix factorization)
-- `evaluate_recall.py`
-
-### preliminary results!
+### baseline results!
 | Algorithm | Users | Recall@10 | Recall@20 | Recall@50 | Recall@100 |
 |----------|-------|-----------|-----------|-----------|------------|
 | mf       | 2485  | 0.0552    | 0.0881    | 0.1474    | 0.2069     |
@@ -110,32 +76,6 @@ for eval (specify the input and output files when running)
 | poprec   | 2485  | 0.0048    | 0.0065    | 0.0103    | 0.0216     |
 
 (actual numbers don't matter - it's just about how well it performs relative to the baseline algos, especially matrix factorization)
-
-### COMPLETED
-- embeddings
-- clustering
-- getting recs per cluster (used implicit library instead of lightFM bc lightFM is not compatible with python ver>12.0 and implicit uses a more straightforward algo)
-- getting recs per user NON PRIVATELY
-- filtered books dataset. lots of duplicate book titles listed under multiple book IDs so I just combined them all so we have 96k books now. lowkey there's still duplicate books e.g. "wonder (wonder #1)" vs. "wonder" but it's ok. i reran process_dataset.py on the new data and everything so recommend pulling from the repo!!!
-- filtered test users to only have users with > 20 ratings for accurate evaluation
-- script to run baseline rec algos (recommend most popular, itemknn, userknn, implicit library on all data) for evaluation
-- MULTI-CLUSTER ASSIGNMENTS - tiptoe also says: "A common technique to increase search quality in clusterbased nearest-neighbor-search is to assign a single document to multiple clusters [26,64]. Following prior work [26], Tiptoe assigns documents to multiple clusters if they are close to cluster boundaries. In particular, Tiptoe assigns 20% of the documents to two clusters and the remaining 80% only to a single cluster, resulting in a roughly 1.2× overhead in server computation and √ 1.2× overhead in communication. We show in §8 that this optimization improves search quality."
-- evaluating recall
-  evaluation method: take each user profile and make a train/test split out of it (e.g. for user with 20 ratings, 16 books are part of their profile, and we expect the rec algo to recommend the other 4). then see how well poprec, itemknn, userknn, implicit, and pinpointe all do.
-- clustering experiments (almosttt done this was super ad hoc)
-
-
-**random notes on clustering:**
-ok for clustering used truncatedSVD for dimensionality reduction to dimension 300 (instead of 124k) but the parameter of 300 can maybe be toyed with/improved.
-
-i use spherical kmeans clustering (i.e. kmeans on l2 normalized data) which uses cosine similarity because, as claude states:
-- Cosine similarity is often more meaningful for collaborative filtering
-- Works better with sparse matrices
-- Better captures user preference patterns
-
-older TODO:
-- BALANCE CLUSTERS - the tiptoe paper says that " To obtain roughly balanced clusters, we recursively split large clusters into multiple smaller ones".  I don't think it's super important to have like equal size clusters but at least maybe split up that huge cluster.
-- anyway so i'm thinking we can run the experiment on both "not recursively splitting to balance" and with "balancing" and observe which one works better.
 
 
 
