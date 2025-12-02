@@ -56,7 +56,6 @@ can just see the numbers in the table below - these stay the same no matter what
 - run `evaluate_recall.py`
 
 ### getting recommendations and evaluating pinpointe:
-*NOTE: was a small bug in filter users, so may want to rerun the `create_embeddings.py --dataset all` before running the filter users below
 - `filter_users.py path-to-user_embeddings_train path-to-user_embeddings_train --min-total 5 --min-relevant 0` - performs better when we only train with users with 5+ ratings, other users are just noise
 - `cluster_embeddings.py` -> `user_clusters.json`, `svd_model.pkl` (saved SVD model)
 - `generate_cluster_recs.py` -> `recs_per_cluster.json`
@@ -76,6 +75,7 @@ yay!
 | poprec   | 2485  | 0.0048    | 0.0065    | 0.0103    | 0.0216     |
 
 (actual numbers don't matter - it's just about how well it performs relative to the baseline algos, especially matrix factorization)
+
 
 
 
