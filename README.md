@@ -1,6 +1,6 @@
 ﻿# CS350S-PinPointe
 
- ## RUNNING EXPERIMENTS
+ ## Running Experiments
  
  results here!: https://docs.google.com/spreadsheets/d/1VuNzrv8lEP68u9SJCrAJFcX423gDiUkjQUrhptcLOLU/edit?usp=sharing
  
@@ -10,7 +10,6 @@ best results:
 pinpointe       |    2485 |     0.0323 |     0.0523 |     0.0953 |     0.1458
  
 **To run experiments:**
-(i'm done running them tho LOL)
 
 Step 1: Cluster
 > **python3 cluster_embeddings.py --multicluster [# clusters to assign each user to]**
@@ -31,7 +30,7 @@ Step 4: Run Eval
 > **python3 eval/evaluate_recall.py**
 
 
-## setup guide: ##
+## Setup Guide: ##
 
 ### getting the right data:
 - go to util and run `book_stats_dedup.py` -- this combines books with the exact same title into one ID. then take the two output files (ending in `_dedup`), rename them to take out the `_dedup`, and delete the old goodreads json files. use these ones instead!
@@ -75,6 +74,7 @@ yay!
 | poprec   | 2485  | 0.0048    | 0.0065    | 0.0103    | 0.0216     |
 
 (actual numbers don't matter - it's just about how well it performs relative to the baseline algos, especially matrix factorization)
+
 
 
 
