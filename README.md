@@ -22,7 +22,7 @@ Step 2: Generate cluster recommendations (uses the new clusters)
 > optional: add --equal-weights if you want each user to contribute recs equally to the cluster. otherwise they will contribute based priority/cluster rank
 
 Step 3: Query
-> **python3 query_for_recs.py --multiassignment_prop [# clusters to query]**
+> **python3 query_for_recs.py --multiassignment-prop [# clusters to query]**
 > 
 > switch between --multiassignment_prop and --multiassignment_equal to choose whether clusters contribute recs proportionally by user similarity to the cluster, or contribute recs equally
 
@@ -74,6 +74,7 @@ yay!
 | poprec   | 2485  | 0.0048    | 0.0065    | 0.0103    | 0.0216     |
 
 (actual numbers don't matter - it's just about how well it performs relative to the baseline algos, especially matrix factorization)
+
 
 
 
